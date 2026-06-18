@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "path-to-academia"
+version = "1.0.0"
+description = "Agent-native academic opportunity intelligence workspace and plugin."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "path to academia contributors" }]
+keywords = ["academic", "postdoc", "research", "agent", "plugin", "workspace"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Environment :: Console",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Topic :: Utilities"
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["build", "pytest"]
+
+[project.urls]
+Homepage = "https://github.com/ZimoLiao/path-to-academia"
+Repository = "https://github.com/ZimoLiao/path-to-academia"
+Issues = "https://github.com/ZimoLiao/path-to-academia/issues"
+Changelog = "https://github.com/ZimoLiao/path-to-academia/blob/main/CHANGELOG.md"
+
+[project.scripts]
+path-to-academia = "path_to_academia.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+path_to_academia = ["webui/static/*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

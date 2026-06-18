@@ -1,0 +1,4 @@
+interface:
+  display_name: "path to academia"
+  short_description: "Guide and audit academic opportunity workspaces"
+  default_prompt: "Use $path-to-academia to run Guided Intake for my academic opportunity workspace."

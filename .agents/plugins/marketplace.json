@@ -1,0 +1,20 @@
+{
+  "name": "path-to-academia",
+  "interface": {
+    "displayName": "path to academia"
+  },
+  "plugins": [
+    {
+      "name": "path-to-academia",
+      "source": {
+        "source": "local",
+        "path": "./plugins/path-to-academia"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

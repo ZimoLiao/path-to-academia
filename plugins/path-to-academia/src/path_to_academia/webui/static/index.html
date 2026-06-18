@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>path to academia</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>path to academia</h1>
+        </div>
+        <div class="topbar__right">
+          <select id="languageSelect" class="language-control" aria-label="Language"></select>
+          <div id="topStats" class="topbar__stats">
+            <span class="stat-pill" data-i18n="app.loading">Loading</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="panel filters-panel" aria-label="Filters">
+          <div class="panel__title" data-i18n="filters.title">Filters</div>
+          <label class="field">
+            <span data-i18n="filters.search">Search</span>
+            <input id="searchInput" type="search" placeholder="name, group, evidence, source" data-i18n-placeholder="filters.searchPlaceholder" autocomplete="off" />
+          </label>
+
+          <div class="filter-block">
+            <div class="filter-block__title" data-i18n="filters.evidence">Evidence</div>
+            <button class="toggle" data-filter="targetVenue" data-i18n="filters.targetVenue">Configured target venue</button>
+            <button class="toggle" data-filter="relatedVenue" data-i18n="filters.relatedVenue">Related venue family</button>
+            <button class="toggle" data-filter="honors" data-i18n="filters.honors">Honors / awards</button>
+          </div>
+
+          <div class="filter-block">
+            <div class="filter-block__title" data-i18n="filters.metrics">Metrics</div>
+            <label class="field field--compact">
+              <span data-i18n="filters.minH">Min h-index</span>
+              <input id="minH" type="number" min="0" step="1" placeholder="0" />
+            </label>
+            <label class="field field--compact">
+              <span data-i18n="filters.minCites">Min citations</span>
+              <input id="minCites" type="number" min="0" step="100" placeholder="0" />
+            </label>
+            <button class="toggle" data-filter="missingMetrics" data-i18n="filters.missingMetrics">Missing metric review</button>
+          </div>
+
+          <div class="filter-block">
+            <div class="filter-block__title" data-i18n="filters.privateStatus">Private Status</div>
+            <div id="statusFilters" class="button-grid"></div>
+          </div>
+
+          <label class="field">
+            <span data-i18n="filters.country">Country</span>
+            <select id="countrySelect">
+              <option value="" data-i18n="filters.allCountries">All countries</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span data-i18n="filters.sort">Sort</span>
+            <select id="sortSelect">
+              <option value="fit" data-i18n="sort.fit">Fit / evidence</option>
+              <option value="h" data-i18n="sort.h">h-index</option>
+              <option value="citations" data-i18n="sort.citations">Citations</option>
+              <option value="venue" data-i18n="sort.venue">Venue evidence</option>
+              <option value="country" data-i18n="sort.country">Country</option>
+              <option value="status" data-i18n="sort.status">Private status</option>
+              <option value="name" data-i18n="sort.name">Name</option>
+            </select>
+          </label>
+          <button id="clearFilters" class="clear-button" data-i18n="filters.clear">Clear filters</button>
+        </aside>
+
+        <aside class="panel tags-panel" aria-label="Tag tree">
+          <div class="panel__title" data-i18n="tags.title">Tag Tree</div>
+          <div id="tagTree" class="tag-tree"></div>
+          <div class="panel-note" data-i18n="tags.note">
+            Tags are derived from `domain_tags`, so each project can define its own branches.
+          </div>
+        </aside>
+
+        <section class="panel list-panel" aria-label="Record list">
+          <div class="list-header">
+            <div>
+              <div class="panel__title" data-i18n="records.title">Records</div>
+              <div id="resultSummary" class="muted" data-i18n="records.loading">Loading</div>
+            </div>
+          </div>
+          <div id="cards" class="cards" aria-live="polite"></div>
+        </section>
+
+        <aside id="dossier" class="panel dossier-panel" aria-label="Evidence dossier">
+          <p class="empty" data-i18n="dossier.empty">Select a record.</p>
+        </aside>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

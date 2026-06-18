@@ -1,0 +1,29 @@
+{
+  "name": "path-to-academia",
+  "version": "1.0.0",
+  "description": "Guided agent workspace for building auditable academic opportunity databases.",
+  "author": {
+    "name": "path to academia contributors",
+    "url": "https://github.com/ZimoLiao"
+  },
+  "homepage": "https://github.com/ZimoLiao/path-to-academia",
+  "repository": "https://github.com/ZimoLiao/path-to-academia",
+  "license": "MIT",
+  "keywords": ["academic", "postdoc", "research", "agent", "plugin", "workspace"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "path to academia",
+    "shortDescription": "Guide agents from intake to audited academic opportunity databases.",
+    "longDescription": "path to academia helps agents ask the right intake questions, configure a domain brief, collect source evidence, verify identity, deduplicate, audit, export, and browse academic people, groups, and position data while keeping private outreach state separate from facts.",
+    "developerName": "path to academia contributors",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://github.com/ZimoLiao/path-to-academia",
+    "defaultPrompt": [
+      "Run Guided Intake for a new academic opportunity workspace.",
+      "Initialize an ML and biology workspace after recording assumptions.",
+      "Audit my path to academia workspace and export a wrapped XLSX."
+    ],
+    "brandColor": "#256C62"
+  }
+}

@@ -1,0 +1,30 @@
+name: Research workflow gap
+description: Report a missing source, evidence, deduplication, or audit workflow pattern.
+title: "[Workflow gap]: "
+labels: ["workflow", "research-quality"]
+body:
+  - type: textarea
+    id: domain
+    attributes:
+      label: Domain brief
+      description: Field, opportunity type, and constraints for the workflow gap.
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: Gap
+      description: What agent workflow failed or is missing?
+    validations:
+      required: true
+  - type: textarea
+    id: source_pattern
+    attributes:
+      label: Source or evidence pattern
+      description: Public source examples, redacted row shape, or source-class description.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: What should the product do when this gap is fixed?
+

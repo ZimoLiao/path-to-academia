@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/lzmo/path-to-academia/security/advisories/new
+    about: Report local file exposure, private-data leakage, or plugin installation issues privately.
+

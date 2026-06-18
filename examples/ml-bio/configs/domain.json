@@ -1,0 +1,56 @@
+{
+  "project": {
+    "name": "ML and Biology Starter Workspace",
+    "description": "Synthetic starter workspace for research groups and open roles."
+  },
+  "domain": {
+    "inclusion_terms": [
+      "machine learning",
+      "representation learning",
+      "computational biology",
+      "genomics",
+      "biomedical AI",
+      "clinical translation"
+    ],
+    "review_terms": [
+      "adjacent methods",
+      "platform team",
+      "infrastructure"
+    ],
+    "exclusion_terms": [
+      "student-only",
+      "expired",
+      "unverified identity"
+    ]
+  },
+  "evidence": {
+    "target_venues": [
+      "Nature",
+      "Science",
+      "Cell",
+      "NeurIPS",
+      "ICML",
+      "ICLR"
+    ],
+    "identity_sources": [
+      "official profile",
+      "ORCID",
+      "OpenAlex",
+      "Semantic Scholar"
+    ]
+  },
+  "source_passes": [
+    {
+      "name": "official group pages",
+      "type": "profile_source"
+    },
+    {
+      "name": "conference award and keynote lists",
+      "type": "reverse_discovery"
+    },
+    {
+      "name": "open position boards",
+      "type": "position_source"
+    }
+  ]
+}

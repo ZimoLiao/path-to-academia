@@ -1,0 +1,24 @@
+{
+  "name": "path-to-academia",
+  "owner": {
+    "name": "path to academia contributors",
+    "url": "https://github.com/ZimoLiao"
+  },
+  "metadata": {
+    "description": "Plugin marketplace for path to academia.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "path-to-academia",
+      "description": "Guided agent workspace for building auditable academic opportunity databases.",
+      "author": {
+        "name": "path to academia contributors",
+        "url": "https://github.com/ZimoLiao"
+      },
+      "homepage": "https://github.com/ZimoLiao/path-to-academia",
+      "tags": ["academic", "postdoc", "research", "agent", "plugin", "workspace"],
+      "source": "./plugins/path-to-academia"
+    }
+  ]
+}
