@@ -200,7 +200,6 @@ def validate_i18n() -> None:
 
 
 def validate_residue() -> None:
-    allowed = 'tests/test_web.py:153:    assert "Academic Opportunity " + "Atlas" not in surface'
     patterns = ["Atlas", "atlas", r"\baoa\b", "aoa_", "serve_atlas", "topCited", "top_cited", "TODO", "FIXME"]
     hits: list[str] = []
     for path in ROOT.rglob("*"):
@@ -219,7 +218,10 @@ def validate_residue() -> None:
             elif "aoa" in line.lower().split():
                 rel = path.relative_to(ROOT).as_posix()
                 hits.append(f"{rel}:{line_no}:    {line.strip()}")
-    unexpected = [hit for hit in hits if hit != allowed]
+    def allowed_hit(hit: str) -> bool:
+        return hit.startswith("tests/test_web.py:") and '"Academic Opportunity " + "Atlas" not in surface' in hit
+
+    unexpected = [hit for hit in hits if not allowed_hit(hit)]
     if unexpected:
         raise SystemExit("unexpected stale residue:\n" + "\n".join(unexpected))
 

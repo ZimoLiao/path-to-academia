@@ -357,19 +357,30 @@ function renderCards() {
   }
   els.cards.innerHTML = state.filtered.map(renderCard).join("");
   els.cards.querySelectorAll(".card").forEach((card) => {
-    card.addEventListener("click", () => {
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("a, button, input, select, textarea")) return;
       state.selectedKey = card.dataset.key;
       renderCards();
       renderDossier();
+    });
+  });
+  els.cards.querySelectorAll("[data-evidence-section]").forEach((control) => {
+    control.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      state.selectedKey = control.dataset.key;
+      renderCards();
+      renderDossier();
+      focusDossierSection(control.dataset.evidenceSection);
     });
   });
 }
 
 function renderCard(row) {
   const badges = [
-    row.hasTargetVenue ? `<span class="badge">${escapeHtml(t("badge.targetVenue"))}</span>` : "",
-    row.hasRelatedVenue ? `<span class="badge">${escapeHtml(t("badge.relatedVenue"))}</span>` : "",
-    row.hasHonors ? `<span class="badge">${escapeHtml(t("badge.honors"))}</span>` : "",
+    row.hasTargetVenue ? evidenceBadge(row, "targetPublication", t("badge.targetVenue")) : "",
+    row.hasRelatedVenue ? evidenceBadge(row, "targetPublication", t("badge.relatedVenue")) : "",
+    row.hasHonors ? evidenceBadge(row, "honors", t("badge.honors")) : "",
   ].join("");
   return `
     <article class="card ${row.person_key === state.selectedKey ? "is-selected" : ""}" data-key="${escapeAttr(row.person_key)}">
@@ -384,6 +395,7 @@ function renderCard(row) {
         <span>${escapeHtml(t("metric.h"))} ${escapeHtml(row.h_index || "NA")}</span>
         <span>${escapeHtml(t("metric.citations"))} ${escapeHtml(formatNumber(row.citation_count) || "NA")}</span>
       </div>
+      ${renderCardActions(row)}
     </article>
   `;
 }
@@ -406,14 +418,14 @@ function renderDossier() {
       ${renderStatusEditor(row)}
     </section>
 
-    ${section(t("dossier.group"), row.department_or_group)}
-    ${section(t("dossier.summary"), row.summary_text)}
-    ${section(t("dossier.relevanceEvidence"), row.relevance_evidence || row.relevance_reason)}
-    ${section(t("dossier.honors"), row.honors)}
-    ${section(t("dossier.metrics"), metricsText(row))}
-    ${section(t("dossier.targetPublication"), row.target_publication_evidence)}
-    ${section(t("dossier.notes"), row.notes)}
-    ${section(t("dossier.sourceProvenance"), sourceText(row))}
+    ${section(t("dossier.group"), row.department_or_group, "group")}
+    ${section(t("dossier.summary"), row.summary_text, "summary")}
+    ${section(t("dossier.relevanceEvidence"), row.relevance_evidence || row.relevance_reason, "relevanceEvidence")}
+    ${section(t("dossier.honors"), row.honors, "honors")}
+    ${section(t("dossier.metrics"), metricsText(row), "metrics")}
+    ${section(t("dossier.targetPublication"), row.target_publication_evidence, "targetPublication")}
+    ${section(t("dossier.notes"), row.notes, "notes")}
+    ${sourceSection(row)}
   `;
   bindDossierControls(row);
 }
@@ -492,17 +504,32 @@ function bindDossierControls(row) {
   });
 }
 
-function section(title, value) {
+function section(title, value, sectionName = "") {
   if (!clean(value)) return "";
+  const sectionAttrs = sectionName
+    ? ` id="${escapeAttr(dossierSectionId(sectionName))}" data-dossier-section="${escapeAttr(sectionName)}"`
+    : "";
   return `
-    <section class="dossier-section">
+    <section class="dossier-section"${sectionAttrs}>
       <div class="dossier-section__title">${escapeHtml(title)}</div>
-      <div class="dossier-text">${escapeHtml(value).replace(/\n/g, "<br />")}</div>
+      <div class="dossier-text">${linkifyText(value)}</div>
     </section>
   `;
 }
 
 function linkRow(row) {
+  const all = profileLinks(row, { includeExtraSources: true });
+  if (!all.length) return "";
+  return `<div class="link-row">${renderLinks(all)}</div>`;
+}
+
+function renderCardActions(row) {
+  const links = profileLinks(row, { includeExtraSources: false });
+  if (!links.length) return "";
+  return `<div class="card-actions link-row">${renderLinks(links)}</div>`;
+}
+
+function profileLinks(row, options = {}) {
   const links = [
     [t("link.homepage"), row.homepage_url],
     [t("link.orcid"), row.orcid_url],
@@ -511,15 +538,98 @@ function linkRow(row) {
     [t("link.semanticScholar"), row.semantic_scholar_url],
     [t("link.primarySource"), row.source_url],
   ].filter(([, href]) => clean(href) && /^https?:\/\//.test(href));
+  if (!options.includeExtraSources) return dedupeLinks(links);
   const extra = (row.all_source_urls || "")
     .split(";")
     .map((item) => item.trim())
     .filter((href) => /^https?:\/\//.test(href))
     .slice(0, 4)
     .map((href, index) => [t("link.sourceNumber", { count: index + 1 }), href]);
-  const all = [...links, ...extra];
-  if (!all.length) return "";
-  return `<div class="link-row">${all.map(([label, href]) => `<a href="${escapeAttr(href)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`).join("")}</div>`;
+  return dedupeLinks([...links, ...extra]);
+}
+
+function renderLinks(links) {
+  return links.map(([label, href]) => `<a href="${escapeAttr(href)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`).join("");
+}
+
+function evidenceBadge(row, sectionName, label) {
+  const preview = sectionName === "honors" ? row.honors : row.target_publication_evidence;
+  const title = clean(preview) || label;
+  return `<button type="button" class="badge badge-button" data-key="${escapeAttr(row.person_key)}" data-evidence-section="${escapeAttr(sectionName)}" title="${escapeAttr(title)}" aria-label="${escapeAttr(`${label}: ${row.name}`)}">${escapeHtml(label)}</button>`;
+}
+
+function sourceSection(row) {
+  const links = sourceLinks(row);
+  const sourceNames = [row.source_name, row.all_source_names].filter(clean).join("\n");
+  if (!clean(sourceNames) && !links.length) return "";
+  return `
+    <section class="dossier-section" id="${escapeAttr(dossierSectionId("sourceProvenance"))}" data-dossier-section="sourceProvenance">
+      <div class="dossier-section__title">${escapeHtml(t("dossier.sourceProvenance"))}</div>
+      ${clean(sourceNames) ? `<div class="dossier-text">${linkifyText(sourceNames)}</div>` : ""}
+      ${links.length ? `<div class="source-list link-row">${renderLinks(links)}</div>` : ""}
+    </section>
+  `;
+}
+
+function sourceLinks(row) {
+  const names = splitList(row.all_source_names);
+  const links = [];
+  if (clean(row.source_url) && /^https?:\/\//.test(row.source_url)) {
+    links.push([row.source_name || t("link.primarySource"), row.source_url]);
+  }
+  splitList(row.all_source_urls)
+    .filter((href) => /^https?:\/\//.test(href))
+    .forEach((href, index) => {
+      links.push([names[index] || t("link.sourceNumber", { count: index + 1 }), href]);
+    });
+  return dedupeLinks(links);
+}
+
+function dedupeLinks(links) {
+  const seen = new Set();
+  return links.filter(([, href]) => {
+    const key = clean(href);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function linkifyText(value) {
+  const text = clean(value);
+  const pattern = /https?:\/\/[^\s<>"']+/g;
+  let html = "";
+  let lastIndex = 0;
+  for (const match of text.matchAll(pattern)) {
+    html += formatPlainText(text.slice(lastIndex, match.index));
+    const { href, suffix } = trimUrlSuffix(match[0]);
+    html += `<a href="${escapeAttr(href)}" target="_blank" rel="noreferrer">${escapeHtml(href)}</a>${formatPlainText(suffix)}`;
+    lastIndex = match.index + match[0].length;
+  }
+  html += formatPlainText(text.slice(lastIndex));
+  return html;
+}
+
+function trimUrlSuffix(raw) {
+  let href = raw;
+  let suffix = "";
+  while (/[),.;\]]$/.test(href)) {
+    suffix = href.slice(-1) + suffix;
+    href = href.slice(0, -1);
+  }
+  return { href, suffix };
+}
+
+function formatPlainText(value) {
+  return escapeHtml(value).replace(/\n/g, "<br />");
+}
+
+function focusDossierSection(sectionName) {
+  const section = document.getElementById(dossierSectionId(sectionName));
+  if (!section) return;
+  section.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  section.classList.add("is-highlighted");
+  window.setTimeout(() => section.classList.remove("is-highlighted"), 900);
 }
 
 function metricsText(row) {
@@ -532,8 +642,8 @@ function metricsText(row) {
     .join("\n");
 }
 
-function sourceText(row) {
-  return [row.source_name, row.source_url, row.all_source_names, row.all_source_urls].filter(clean).join("\n");
+function dossierSectionId(sectionName) {
+  return `dossier-section-${String(sectionName || "").replace(/[^a-z0-9_-]/gi, "-")}`;
 }
 
 function fitScore(row) {
@@ -560,6 +670,13 @@ function tagPill(tag) {
 }
 
 function splitTags(value) {
+  return String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function splitList(value) {
   return String(value || "")
     .split(";")
     .map((item) => item.trim())

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.3 - 2026-06-18
+
+- Added direct profile/source links to result cards so homepage, scholar, ORCID, OpenAlex,
+  Semantic Scholar, and primary source URLs are one click away when present.
+- Made evidence badges actionable: honors and venue badges now jump to the corresponding profile
+  section and briefly highlight the evidence.
+- Linkified URLs inside dossier text and rendered source provenance as clickable source links.
+- Updated synthetic examples to use more specific honors such as fellowships and medals.
+
 ## 1.0.2 - 2026-06-18
 
 - Added the large-collection playbook for source-batch accounting, sentinel checks, staged source

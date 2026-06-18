@@ -292,6 +292,7 @@ textarea {
 .tag-row,
 .metrics-line,
 .link-row,
+.card-actions,
 .save-row {
   display: flex;
   flex-wrap: wrap;
@@ -327,6 +328,20 @@ textarea {
   background: white;
 }
 
+.badge-button {
+  width: auto;
+  cursor: pointer;
+}
+
+.badge-button:hover,
+.badge-button:focus-visible,
+.link-row a:hover,
+.link-row a:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
 .status-badge[data-status="rejected"] {
   background: var(--ink);
   color: white;
@@ -342,6 +357,11 @@ textarea {
   padding: 11px 0;
 }
 
+.dossier-section.is-highlighted {
+  background: var(--warning);
+  box-shadow: -14px 0 0 var(--warning), 14px 0 0 var(--warning);
+}
+
 .dossier-section__title {
   color: var(--muted);
   font-size: 12px;
@@ -354,6 +374,14 @@ textarea {
   line-height: 1.45;
   overflow-wrap: anywhere;
   white-space: normal;
+}
+
+.dossier-text a {
+  color: var(--accent-strong);
+}
+
+.source-list {
+  margin-top: 9px;
 }
 
 .status-editor {

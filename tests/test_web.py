@@ -60,6 +60,30 @@ def test_static_ui_exposes_core_workspace_controls() -> None:
         assert control in surface
 
 
+def test_static_ui_makes_profile_links_and_evidence_badges_actionable() -> None:
+    root = Path(__file__).resolve().parents[1]
+    js = (root / "src" / "path_to_academia" / "webui" / "static" / "app.js").read_text(encoding="utf-8")
+    css = (root / "src" / "path_to_academia" / "webui" / "static" / "styles.css").read_text(encoding="utf-8")
+    surface = js + "\n" + css
+
+    required_fragments = [
+        "function renderCardActions(row)",
+        "card-actions",
+        "link.homepage",
+        'data-evidence-section="${escapeAttr(sectionName)}"',
+        'evidenceBadge(row, "honors"',
+        'evidenceBadge(row, "targetPublication"',
+        "function focusDossierSection",
+        'event.target.closest("a, button',
+        "function linkifyText",
+        "sourceSection(row)",
+        'target="_blank"',
+        'rel="noreferrer"',
+    ]
+    for fragment in required_fragments:
+        assert fragment in surface
+
+
 def test_static_ui_has_complete_localization_boundary() -> None:
     root = Path(__file__).resolve().parents[1]
     html = (root / "src" / "path_to_academia" / "webui" / "static" / "index.html").read_text(encoding="utf-8")
