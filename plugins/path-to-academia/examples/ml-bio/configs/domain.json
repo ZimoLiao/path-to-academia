@@ -23,6 +23,19 @@
       "unverified identity"
     ]
   },
+  "constraints": {
+    "opportunity_types": [
+      "people",
+      "groups",
+      "open roles"
+    ],
+    "geographic_scope": [
+      "global"
+    ],
+    "additional_constraints": [
+      "prioritize active groups with auditable source links"
+    ]
+  },
   "evidence": {
     "target_venues": [
       "Nature",
@@ -32,8 +45,20 @@
       "ICML",
       "ICLR"
     ],
+    "related_venue_families": [
+      "Nature Portfolio",
+      "Cell Press",
+      "major machine learning conferences",
+      "computational biology venues"
+    ],
+    "honor_sources": [
+      "academy fellowships",
+      "society fellows and awards",
+      "conference invited/keynote lists"
+    ],
     "identity_sources": [
       "official profile",
+      "Google Scholar author page",
       "ORCID",
       "OpenAlex",
       "Semantic Scholar"

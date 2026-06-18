@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.4 - 2026-06-18
+
+- Split Guided Intake evidence setup into separate required questions for exact target venues,
+  related venue families, honor sources, identity-link sources, and open-ended additional
+  constraints.
+- Clarified that target venues are user-owned high-signal prioritization anchors, not an
+  agent-generated full field bibliography.
+- Added `related_venue_families`, `honor_sources`, and `constraints.additional_constraints` to
+  workspace config and context output.
+- Added quality-report enrichment coverage for profile links, Google Scholar links, honors, and
+  target-publication evidence.
+
 ## 1.0.3 - 2026-06-18
 
 - Added direct profile/source links to result cards so homepage, scholar, ORCID, OpenAlex,

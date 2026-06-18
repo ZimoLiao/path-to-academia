@@ -22,6 +22,7 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
     config = read_domain_config(workspace)
     project = config.get("project", {}) if isinstance(config.get("project", {}), dict) else {}
     domain = config.get("domain", {}) if isinstance(config.get("domain", {}), dict) else {}
+    constraints = config.get("constraints", {}) if isinstance(config.get("constraints", {}), dict) else {}
     evidence = config.get("evidence", {}) if isinstance(config.get("evidence", {}), dict) else {}
     source_passes = list_values(config.get("source_passes", []))
 
@@ -36,8 +37,15 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
             "review_terms": list_values(domain.get("review_terms", [])),
             "exclusion_terms": list_values(domain.get("exclusion_terms", [])),
         },
+        "constraints": {
+            "opportunity_types": list_values(constraints.get("opportunity_types", [])),
+            "geographic_scope": list_values(constraints.get("geographic_scope", [])),
+            "additional_constraints": list_values(constraints.get("additional_constraints", [])),
+        },
         "evidence": {
             "target_venues": list_values(evidence.get("target_venues", [])),
+            "related_venue_families": list_values(evidence.get("related_venue_families", [])),
+            "honor_sources": list_values(evidence.get("honor_sources", [])),
             "identity_sources": list_values(evidence.get("identity_sources", [])),
         },
         "source_passes": source_passes,
@@ -61,6 +69,7 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
             "Run path-to-academia qa after table edits.",
             "Preserve source URLs and audit notes for manual judgments.",
             "Treat blank enrichment as unknown or not collected, not negative evidence.",
+            "Keep target venues, related venue families, honor sources, and other constraints user-owned; ask before auto-filling broad lists.",
+            "Collect Google Scholar author-page links when available, or audit why they were not collected.",
         ],
     }
-

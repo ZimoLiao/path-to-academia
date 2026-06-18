@@ -15,11 +15,17 @@ Purpose: project-specific rules that should not become hardcoded schema fields.
 Important keys:
 
 - `domain`: inclusion, review, and exclusion terms.
-- `evidence`: target venues and accepted identity sources.
+- `constraints`: opportunity types, geography, and open-ended additional constraints.
+- `evidence`: target venues, related venue families, honor sources, and accepted identity sources.
 - `source_passes`: planned source-family passes with stable batch names.
 - `sentinel_checks`: user-provided coverage probes such as must-include people, groups, roles,
   venues, institutions, or source families. Each sentinel must appear in outputs or receive an
   explicit audit explanation.
+
+Keep `target_venues` user-owned and usually short. They are high-signal prioritization anchors, not
+a full bibliography for the field. Put adjacent or broader lists in `related_venue_families`, and
+put award, medal, fellowship, academy, invited/keynote, editorial-board, and committee sources in
+`honor_sources`.
 
 ## Raw Source Records
 
@@ -66,6 +72,12 @@ Evidence fields:
 - `target_publication_evidence`: concise text naming or summarizing the verified target evidence.
 - `honors`: awards or recognition relevant to prioritization.
 - `metric_source`: source and retrieval context for metrics.
+
+Identity-link fields:
+
+- `homepage_url`: official homepage, lab page, or institutional profile.
+- `scholar_url`: Google Scholar or equivalent author page when verified.
+- `orcid_url`, `openalex_url`, `semantic_scholar_url`: persistent scholarly profiles when verified.
 
 Classification fields:
 

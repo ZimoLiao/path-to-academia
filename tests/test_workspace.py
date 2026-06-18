@@ -35,6 +35,9 @@ def test_init_workspace_creates_generic_ml_bio_example(tmp_path: Path) -> None:
     assert config["project"]["name"] == "ML and Biology Starter Workspace"
     assert "inclusion_terms" in config["domain"]
     assert "target_venues" in config["evidence"]
+    assert "related_venue_families" in config["evidence"]
+    assert "honor_sources" in config["evidence"]
+    assert "additional_constraints" in config["constraints"]
     assert "sentinel_checks" in config
 
     entities = read_rows(workspace / "tables" / "entities_final.csv")
@@ -59,6 +62,9 @@ def test_init_workspace_empty_example_has_blank_config_and_tables(tmp_path: Path
     config = json.loads((workspace / "configs" / "domain.json").read_text(encoding="utf-8"))
     assert config["domain"]["inclusion_terms"] == []
     assert config["evidence"]["target_venues"] == []
+    assert config["evidence"]["related_venue_families"] == []
+    assert config["evidence"]["honor_sources"] == []
+    assert config["constraints"]["additional_constraints"] == []
     assert config["sentinel_checks"] == []
     assert read_rows(workspace / "tables" / "entities_final.csv") == []
     assert read_rows(workspace / "raw" / "source_records.csv") == []
@@ -145,6 +151,9 @@ def test_quality_checks_find_blank_fields_and_duplicates(tmp_path: Path) -> None
     assert report["row_count"] == 4
     assert report["duplicate_person_keys"] == 1
     assert "summary_text" in report["blank_required_fields"]
+    assert report["enrichment_coverage"]["scholar_url"] == 0
+    assert report["enrichment_coverage"]["honors"] == 3
+    assert report["enrichment_coverage"]["target_publication_evidence"] == 4
     assert report["unmatched_status_count"] == 0
 
 

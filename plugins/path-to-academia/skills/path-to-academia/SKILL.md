@@ -28,12 +28,26 @@ Minimum intake:
 3. constraints: geography, institution types, career stage, funding, visa, deadlines, language, and
    must-include or must-exclude rules.
 4. geographic scope: countries, regions, institutions, and source languages to include or avoid.
-5. evidence signals: target venues, related venue families, awards, metrics, official profiles,
-   publication evidence, and freshness requirements.
-6. sentinel checks: must-include people, groups, roles, venues, institutions, or source families
+5. target venues: a short user-owned list of high-signal journals, conferences, publishers, or
+   programs used for prioritization. Ask whether this should be narrow, such as only top general
+   venues, or broader domain venues. Do not auto-fill a long field bibliography.
+6. related venue families: adjacent journal families, society meetings, special issues, or
+   proceedings that should count as related evidence, separate from exact target venues.
+7. honor sources: awards, medals, fellowships, academies, invited talks, keynote lists, editorial
+   boards, or committee lists worth reverse-scanning.
+8. identity and metric sources: official profiles, Google Scholar author pages, ORCID, OpenAlex,
+   Semantic Scholar, metrics, publication evidence, and freshness requirements.
+9. other constraints: ask an open-ended question for anything else the user wants emphasized,
+   avoided, or handled carefully.
+10. sentinel checks: must-include people, groups, roles, venues, institutions, or source families
    that must appear or receive an explicit audit explanation.
-7. output format: CSV, wrapped XLSX, local UI, audit report, private outreach state, or a publishable
+11. output format: CSV, wrapped XLSX, local UI, audit report, private outreach state, or a publishable
    repository.
+
+Ask these as separate questions. Do not auto-fill target venues, related venue families, or honor
+sources from your own field assumptions without showing the proposed list and getting the user's
+confirmation. If the user is unsure, offer a compact starter list and mark it as provisional in
+`audit/`.
 
 After intake, write the assumptions into `configs/domain.json` and keep unclear or disputed rules in
 `audit/` so future agents can inspect the decision trail.

@@ -22,12 +22,23 @@ Ask for:
 - constraints: career stage, institution type, seniority, funding, visa, remote/on-site, deadlines,
   language, or collaboration requirements.
 - geographic scope: countries, regions, institutions, and explicit exclusions.
-- evidence signals: target venues, related venue families, awards, metrics, official profile types,
-  publication evidence, and recency requirements.
+- target venues: a short user-owned list of high-signal journals, conferences, publishers, or
+  programs used for prioritization. Do not auto-fill a long field bibliography.
+- related venue families: adjacent journal families, society meetings, special issues, or
+  proceedings that count as related evidence but are not exact targets.
+- honor sources: awards, medals, fellowships, academies, invited/keynote lists, editorial boards, or
+  committee lists worth reverse-scanning.
+- identity links and metrics: official profile types, Google Scholar author pages, ORCID, OpenAlex,
+  Semantic Scholar, publication evidence, citation metrics, and recency requirements.
+- other constraints: an open-ended prompt for anything else the user wants emphasized, avoided, or
+  handled carefully.
 - sentinel checks: must-include people, groups, roles, venues, institutions, or source families that
   must appear or receive an explicit audit explanation.
 - output format: local UI, CSV, wrapped XLSX, audit notes, private outreach state, or a publishable
   repository.
+
+Ask these as separate questions. If the user is unsure, offer a compact provisional starter list and
+record that assumption in `audit/`.
 
 If the user wants a fast default, initialize the machine-learning-and-biology example and write the
 assumptions into `audit/`.
@@ -209,7 +220,7 @@ python3 -m py_compile $(find src scripts -name '*.py')
 
 ## Version
 
-Current release: `1.0.3`.
+Current release: `1.0.4`.
 
 ## License
 

@@ -87,6 +87,27 @@ def test_skill_requires_incremental_persistence_during_collection() -> None:
     assert missing == []
 
 
+def test_guided_intake_requires_separate_evidence_questions() -> None:
+    root = Path(__file__).resolve().parents[1]
+    readme = (root / "README.md").read_text(encoding="utf-8").lower()
+    skill = (root / "skills" / "path-to-academia" / "SKILL.md").read_text(encoding="utf-8").lower()
+    manifest = (root / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8").lower()
+    surface = readme + "\n" + skill + "\n" + manifest
+
+    required_terms = [
+        "ask these as separate questions",
+        "target venues",
+        "related venue families",
+        "honor sources",
+        "other constraints",
+        "do not auto-fill",
+        "google scholar",
+    ]
+
+    missing = [term for term in required_terms if term not in surface]
+    assert missing == []
+
+
 def test_collection_playbook_deposits_large_collection_lessons() -> None:
     root = Path(__file__).resolve().parents[1]
     playbook_path = root / "docs" / "collection-playbook.md"

@@ -192,7 +192,10 @@ def test_plugin_docs_start_with_guided_agent_intake() -> None:
         "research direction",
         "constraints",
         "geographic scope",
-        "evidence signals",
+        "target venues",
+        "related venue families",
+        "honor sources",
+        "Google Scholar",
         "output format",
         "Do not start source collection",
     ]

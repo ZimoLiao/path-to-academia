@@ -16,10 +16,18 @@ Start from `configs/domain.json` and define:
 - review terms that require manual inspection
 - exclusion terms that indicate expired, off-topic, duplicate, or unverified records
 - target or impact venues that matter for prioritization
-- identity sources accepted for verification
+- related venue families that should count as adjacent evidence
+- honor sources such as awards, medals, fellowships, academies, invited/keynote lists, editorial
+  boards, and committee lists
+- identity-link sources accepted for verification, including official profiles, Google Scholar
+  author pages, ORCID, OpenAlex, and Semantic Scholar when available
+- open-ended additional constraints from the user
 - source passes to run
 
-These terms are project data. Do not bake them into code or schema names.
+These terms are project data. Do not bake them into code or schema names. Ask the user for target
+venues, related venue families, honor sources, and other constraints as separate questions. Target
+venues are usually a short high-signal prioritization list, not a full field bibliography; if the
+agent proposes defaults, record them as provisional until the user confirms them.
 
 ## 2. Plan Constraint-Driven Source Passes
 

@@ -36,6 +36,18 @@ def build_quality_report(workspace: Path) -> dict[str, object]:
     duplicate_person_keys = sum(1 for _, count in Counter(keys).items() if count > 1)
     known = set(keys)
     unmatched = [row for row in statuses if row.get("person_key", "") not in known]
+    enrichment_fields = [
+        "homepage_url",
+        "orcid_url",
+        "scholar_url",
+        "openalex_url",
+        "semantic_scholar_url",
+        "honors",
+        "target_publication_evidence",
+    ]
+    enrichment_coverage = {
+        field: sum(1 for row in rows if row.get(field, "").strip()) for field in enrichment_fields
+    }
 
     report: dict[str, object] = {
         "row_count": len(rows),
@@ -44,6 +56,7 @@ def build_quality_report(workspace: Path) -> dict[str, object]:
         "blank_required_fields": blank_required,
         "unmatched_status_count": len(unmatched),
         "unmatched_status_keys": [row.get("person_key", "") for row in unmatched],
+        "enrichment_coverage": enrichment_coverage,
         "fact_table": str(table),
         "status_file": str(status_file),
     }

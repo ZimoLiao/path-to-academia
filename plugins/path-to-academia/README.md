@@ -18,8 +18,9 @@ The bundle contains:
 
 After installation, invoke the skill as `path-to-academia` in Codex or as
 `/path-to-academia:path-to-academia` in Claude Code. The skill starts with Guided Intake: it asks
-for the research direction, opportunity type, constraints, geographic scope, evidence signals,
-sentinel checks, and desired outputs before collecting sources.
+for the research direction, opportunity type, constraints, geographic scope, exact target venues,
+related venue families, honor sources, identity-link sources such as Google Scholar, other
+constraints, sentinel checks, and desired outputs before collecting sources.
 
 The Python CLI can also be used directly from this bundle:
 

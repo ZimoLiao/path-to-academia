@@ -31,9 +31,33 @@ def example_config() -> dict[str, object]:
             "review_terms": ["adjacent methods", "platform team", "infrastructure"],
             "exclusion_terms": ["student-only", "expired", "unverified identity"],
         },
+        "constraints": {
+            "opportunity_types": ["people", "groups", "open roles"],
+            "geographic_scope": ["global"],
+            "additional_constraints": [
+                "prioritize active groups with auditable source links"
+            ],
+        },
         "evidence": {
             "target_venues": ["Nature", "Science", "Cell", "NeurIPS", "ICML", "ICLR"],
-            "identity_sources": ["official profile", "ORCID", "OpenAlex", "Semantic Scholar"],
+            "related_venue_families": [
+                "Nature Portfolio",
+                "Cell Press",
+                "major machine learning conferences",
+                "computational biology venues",
+            ],
+            "honor_sources": [
+                "academy fellowships",
+                "society fellows and awards",
+                "conference invited/keynote lists",
+            ],
+            "identity_sources": [
+                "official profile",
+                "Google Scholar author page",
+                "ORCID",
+                "OpenAlex",
+                "Semantic Scholar",
+            ],
         },
         "source_passes": [
             {"name": "official group pages", "type": "profile_source"},
@@ -57,9 +81,22 @@ def empty_config() -> dict[str, object]:
             "review_terms": [],
             "exclusion_terms": [],
         },
+        "constraints": {
+            "opportunity_types": [],
+            "geographic_scope": [],
+            "additional_constraints": [],
+        },
         "evidence": {
             "target_venues": [],
-            "identity_sources": ["official profile", "ORCID", "OpenAlex", "Semantic Scholar"],
+            "related_venue_families": [],
+            "honor_sources": [],
+            "identity_sources": [
+                "official profile",
+                "Google Scholar author page",
+                "ORCID",
+                "OpenAlex",
+                "Semantic Scholar",
+            ],
         },
         "source_passes": [],
         "sentinel_checks": [],

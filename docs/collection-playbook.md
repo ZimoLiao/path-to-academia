@@ -29,6 +29,20 @@ later repair expensive.
 Treat any seed roster, spreadsheet, or user-provided list as one provenance source, not as a
 coverage boundary.
 
+Before source expansion, confirm high-signal prioritization inputs with the user as separate
+questions:
+
+- exact target venues, usually a short list rather than a full field bibliography
+- related venue families that count as adjacent evidence
+- honor sources for reverse discovery, such as awards, medals, fellowships, academies, invited or
+  keynote lists, editorial boards, and committees
+- identity-link sources to collect, including Google Scholar author pages when the user cares about
+  them
+- any other constraints or things to emphasize, avoid, or handle carefully
+
+Do not auto-fill broad target-venue or honor-source lists from field assumptions. If defaults are
+needed, propose a compact provisional list and record that it was not user-confirmed.
+
 Keep source-batch accounting from the first pass. Every source family should have a batch name,
 row count, retrieval date, access method, and caveat in `audit/`. If a table is mostly seed data,
 say so explicitly and continue expanding independent sources.
@@ -152,6 +166,8 @@ Before calling a large pass ready, check:
 - row counts by source batch
 - blank required fields
 - duplicate normalized identities
+- enrichment coverage for identity links and evidence fields, especially requested fields such as
+  `scholar_url`, `homepage_url`, `honors`, and `target_publication_evidence`
 - unmatched private status rows
 - review/excluded counts
 - metric coverage and missing-metric exceptions
