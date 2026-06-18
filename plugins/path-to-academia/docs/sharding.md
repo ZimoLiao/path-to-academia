@@ -20,6 +20,30 @@ Apply these rules:
 - If subagents are unavailable, run the same shard plan sequentially and record the limitation in
   `audit/`.
 - Do not let workers edit `ui_state/` or private outreach fields.
+- Prefer source-derived queues with a fixed schema over vague "find good candidates" worker tasks.
+
+## Incremental Persistence
+
+Workers must not browse a large result set and keep findings only in chat context. Each worker
+should collect one source or small batch, write rows, record unresolved questions, and only then
+move to the next source. This protects the project from context compaction and makes partial work
+recoverable.
+
+Preferred shard artifacts:
+
+- `raw/shards/<batch>_source_records.csv`
+- `tables/shards/<batch>_entities_candidates.csv`
+- `tables/shards/<batch>_review_or_excluded.csv`
+- `tables/shards/<batch>_positions_current.csv`
+- `audit/<batch>_notes.md`
+
+If a worker cannot write files, it should return compact machine-readable rows for the batch and
+stop before opening more sources. The main agent should persist those rows before dispatching a
+continuation.
+
+Before resuming a shard after context compaction, inspect existing shard files, offset logs, and
+running processes. Continue from the latest durable artifact; do not rerun or overwrite completed
+work blindly.
 
 ## Shard Contract
 
@@ -33,6 +57,14 @@ Each worker should produce:
 - identity evidence used
 - unresolved questions
 - an audit note describing method, coverage, and limits
+
+Worker output must validate before merge:
+
+- CSV header matches the assigned schema exactly
+- row count matches the input shard or missing rows are explained
+- every included row has source URLs and verification notes
+- uncertain identity, metrics, publication evidence, or relevance is marked for review
+- source-list text embedded in a name field is moved to an evidence or notes field
 
 ## Suggested Shards
 
@@ -62,4 +94,5 @@ Write raw evidence rows, candidate rows, review rows, and an audit note.
 Do not edit private outreach state.
 Do not drop ambiguous records silently.
 Do not assign current facts without a current source and retrieval date.
+Persist rows after each source or small batch; do not rely on chat context surviving compaction.
 ```

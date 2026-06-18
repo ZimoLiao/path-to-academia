@@ -24,6 +24,8 @@ Ask for:
 - geographic scope: countries, regions, institutions, and explicit exclusions.
 - evidence signals: target venues, related venue families, awards, metrics, official profile types,
   publication evidence, and recency requirements.
+- sentinel checks: must-include people, groups, roles, venues, institutions, or source families that
+  must appear or receive an explicit audit explanation.
 - output format: local UI, CSV, wrapped XLSX, audit notes, private outreach state, or a publishable
   repository.
 
@@ -207,7 +209,7 @@ python3 -m py_compile $(find src scripts -name '*.py')
 
 ## Version
 
-Current release: `1.0.1`.
+Current release: `1.0.2`.
 
 ## License
 

@@ -27,7 +27,7 @@ def test_init_workspace_creates_generic_ml_bio_example(tmp_path: Path) -> None:
 
     init_workspace(workspace, example="ml-bio")
 
-    expected_dirs = ["configs", "raw", "tables", "audit", "ui_state"]
+    expected_dirs = ["configs", "raw", "raw/shards", "tables", "tables/shards", "audit", "ui_state"]
     for dirname in expected_dirs:
         assert (workspace / dirname).is_dir()
 
@@ -35,6 +35,7 @@ def test_init_workspace_creates_generic_ml_bio_example(tmp_path: Path) -> None:
     assert config["project"]["name"] == "ML and Biology Starter Workspace"
     assert "inclusion_terms" in config["domain"]
     assert "target_venues" in config["evidence"]
+    assert "sentinel_checks" in config
 
     entities = read_rows(workspace / "tables" / "entities_final.csv")
     assert len(entities) == 3
@@ -58,6 +59,7 @@ def test_init_workspace_empty_example_has_blank_config_and_tables(tmp_path: Path
     config = json.loads((workspace / "configs" / "domain.json").read_text(encoding="utf-8"))
     assert config["domain"]["inclusion_terms"] == []
     assert config["evidence"]["target_venues"] == []
+    assert config["sentinel_checks"] == []
     assert read_rows(workspace / "tables" / "entities_final.csv") == []
     assert read_rows(workspace / "raw" / "source_records.csv") == []
 

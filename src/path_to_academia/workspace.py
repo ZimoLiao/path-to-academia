@@ -40,6 +40,9 @@ def example_config() -> dict[str, object]:
             {"name": "conference award and keynote lists", "type": "reverse_discovery"},
             {"name": "open position boards", "type": "position_source"},
         ],
+        "sentinel_checks": [
+            {"name": "Example must-include group", "reason": "User-provided coverage check"}
+        ],
     }
 
 
@@ -59,6 +62,7 @@ def empty_config() -> dict[str, object]:
             "identity_sources": ["official profile", "ORCID", "OpenAlex", "Semantic Scholar"],
         },
         "source_passes": [],
+        "sentinel_checks": [],
     }
 
 
@@ -199,7 +203,7 @@ def init_workspace(workspace: Path, example: str = "ml-bio", force: bool = False
         raise ValueError(f"unknown example: {example}")
 
     workspace = workspace.resolve()
-    for dirname in ["configs", "raw", "tables", "audit", "ui_state"]:
+    for dirname in ["configs", "raw", "raw/shards", "tables", "tables/shards", "audit", "ui_state"]:
         (workspace / dirname).mkdir(parents=True, exist_ok=True)
 
     config_path = workspace / "configs" / "domain.json"
@@ -239,7 +243,9 @@ def init_workspace(workspace: Path, example: str = "ml-bio", force: bool = False
                     "This workspace separates raw source evidence, final fact tables, audit reports, and private outreach state.",
                     "",
                     "- `raw/`: source records and intermediate evidence",
+                    "- `raw/shards/`: per-source or per-worker extraction batches",
                     "- `tables/`: final and review CSV outputs",
+                    "- `tables/shards/`: per-worker candidate, review, or position outputs before merge",
                     "- `audit/`: quality reports and source notes",
                     "- `ui_state/`: private outreach status sidecar",
                     "",

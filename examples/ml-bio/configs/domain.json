@@ -52,5 +52,11 @@
       "name": "open position boards",
       "type": "position_source"
     }
+  ],
+  "sentinel_checks": [
+    {
+      "name": "Example must-include group",
+      "reason": "User-provided coverage check"
+    }
   ]
 }

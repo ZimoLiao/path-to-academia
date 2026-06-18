@@ -10,12 +10,23 @@ is complete.
   `relevance_status`, and `relevance_evidence`.
 - Duplicate normalized `name + institution` keys are reviewed.
 - `raw/source_records.csv` preserves source URLs and retrieval dates.
+- Source-batch counts are reported in `audit/`, including seed-roster share versus independent
+  source-family rows.
 - Review and excluded rows are preserved in `tables/entities_review_or_excluded.csv`.
 - Private outreach state is only in `ui_state/outreach_status.csv`.
 - Current facts have current retrieval dates and sources.
+- `configs/domain.json` sentinel checks either appear in the outputs or have explicit audit notes.
 - Wrapped XLSX output opens with a frozen header, filters, and wrapped text.
 - Blank enrichment fields are treated as unknown or not collected, not as evidence that a person,
   group, or role lacks that attribute.
+- Source passes cover constraint-derived paths such as publication venues, conferences, awards,
+  institutions, funders, job boards, and bridge sources when those constraints are in scope.
+- Substantial passes leave reusable operational memory in `audit/`, including false positives,
+  source limits, failed queries, manual decisions, and next source passes.
+- Collection writes raw, candidate, review, position, or shard rows incrementally instead of keeping
+  evidence only in chat context until the end.
+- Shard outputs validate before merge: fixed header, expected row count or explained omissions,
+  source URLs, verification notes, and manual-check flags for uncertainty.
 
 ## Commands
 
@@ -44,9 +55,17 @@ Those fields belong in `ui_state/outreach_status.csv`, keyed by `person_key`.
 Stop and repair the workflow when:
 
 - a source pass silently drops weak or adjacent records without review output
+- a source pass has no source-batch accounting or hides that most rows came from a seed roster
+- a sentinel check is absent or downgraded without an audit explanation
 - metrics are assigned from a name-only search
 - missing enrichment is used as a negative filter without an explicit source proving absence
 - current roles or deadlines are stated without current sources
 - a final table cannot explain why each included row is relevant
 - duplicate handling loses source provenance
 - the UI writes private state into the fact table
+- a workspace relies only on a seed roster, spreadsheet, single query, or single database without
+  independent source-family passes
+- a substantial pass ends without depositing lessons, gaps, and next actions in `audit/`
+- an agent browses many pages before writing rows, risking context compaction before merge or QA
+- a resumed session reruns or overwrites completed shards without checking existing files, offsets,
+  logs, and running processes

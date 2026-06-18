@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.2 - 2026-06-18
+
+- Added the large-collection playbook for source-batch accounting, sentinel checks, staged source
+  passes, reverse discovery, shard validation, resumable enrichment, publication-evidence safety,
+  current-position capture, QA, and handoff.
+- Updated Guided Intake to collect sentinel checks and added `sentinel_checks` to workspace
+  configuration.
+- Added default `raw/shards/` and `tables/shards/` directories for incremental subagent outputs.
+- Strengthened sharding and quality-gate docs so workers persist rows before continuing, validate
+  fixed schemas before merge, and do not rely on chat context surviving compaction.
+
 ## 1.0.1 - 2026-06-18
 
 - Updated the `path-to-academia` skill to parallelize source collection by default after Guided

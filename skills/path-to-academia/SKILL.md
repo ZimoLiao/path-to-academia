@@ -30,7 +30,9 @@ Minimum intake:
 4. geographic scope: countries, regions, institutions, and source languages to include or avoid.
 5. evidence signals: target venues, related venue families, awards, metrics, official profiles,
    publication evidence, and freshness requirements.
-6. output format: CSV, wrapped XLSX, local UI, audit report, private outreach state, or a publishable
+6. sentinel checks: must-include people, groups, roles, venues, institutions, or source families
+   that must appear or receive an explicit audit explanation.
+7. output format: CSV, wrapped XLSX, local UI, audit report, private outreach state, or a publishable
    repository.
 
 After intake, write the assumptions into `configs/domain.json` and keep unclear or disputed rules in
@@ -54,6 +56,46 @@ the same shard plan sequentially and note that limitation in `audit/`.
 Load `../../docs/sharding.md` before dispatching workers. Every shard must return source rows,
 candidate rows, review/excluded rows, retrieval dates, source URLs, identity evidence, unresolved
 questions, and an audit note. Never let parallel workers write private outreach state.
+
+For large collections that may reach hundreds of records, load `../../docs/collection-playbook.md`
+before source collection. It contains the durable workflow for source-record layers, reverse
+discovery, shard persistence, API rate limits, publication evidence, current roles, QA, and handoff.
+
+## Incremental Persistence
+
+Do not browse a long list of webpages, search results, PDFs, or profiles in chat context before
+writing data. Context can compact or be lost before synthesis. Write rows before continuing.
+
+During collection, persist each useful source or small batch immediately to durable artifacts:
+`raw/source_records.csv`, a shard CSV under `raw/shards/`, the relevant candidate/review/position
+table, and an `audit/` note. A subagent must do the same inside its shard: collect a source, write
+rows, note unresolved questions, then continue. If a worker cannot write files directly, it must
+return compact CSV/JSON rows and an audit note frequently enough for the main agent to persist them
+before dispatching more work.
+
+Never rely on open tabs, search snippets, browser history, or memory surviving context compaction.
+Use later passes for deduplication, ranking, and polish after the raw rows are safely stored.
+
+## Constraint-Driven Search
+
+Turn each user constraint into at least one source path before keyword searching. Record the planned
+paths in `configs/domain.json` and audit what each path did or did not cover.
+
+- If the user has journal or venue constraints, search journal archives, venue families, special
+  issues, proceedings, editorial boards, and recurring corresponding authors; then verify people
+  through official profiles or persistent scholarly IDs.
+- If the user names conferences, workshops, societies, awards, medals, keynotes, or program
+  committees, run reverse-discovery passes from those lists to people, groups, and institutions.
+- If the user has geography or institution constraints, start from official department, institute,
+  center, lab, and doctoral/postdoc-program directories in the relevant source languages.
+- If the user cares about current openings, funding, deadlines, or eligibility, search job boards,
+  funder project databases, fellowship calls, lab hiring pages, and university HR pages.
+- If the topic is interdisciplinary, use bridge sources such as centers, review papers, special
+  issues, summer schools, shared grants, and cross-field workshops instead of relying on one keyword.
+
+Do not treat a seed roster, one spreadsheet, one search query, or one database as a coverage
+guarantee. Collect broadly first, keep weak or adjacent records in review, and rank only after the
+source coverage and identity evidence are auditable.
 
 ## Quick Start
 
@@ -79,11 +121,12 @@ path-to-academia serve ./my-workspace --port 8765
 ## Workflow
 
 1. Load `../../docs/workflow.md` before doing a substantial collection, merge, or rebuild.
-2. Load `../../docs/quality-gates.md` before editing canonical CSVs or claiming a workspace is ready.
-3. Load `../../docs/sharding.md` when splitting discovery or profiling work across several agents.
-4. Use `../../docs/schema.md` from the plugin root when deciding whether a field belongs in the public
+2. Load `../../docs/collection-playbook.md` before large-scale collection or profiling work.
+3. Load `../../docs/quality-gates.md` before editing canonical CSVs or claiming a workspace is ready.
+4. Load `../../docs/sharding.md` when splitting discovery or profiling work across several agents.
+5. Use `../../docs/schema.md` from the plugin root when deciding whether a field belongs in the public
    fact table, review table, position table, or private status sidecar.
-5. Use `../../docs/localization.md` before changing UI language behavior. Localize static UI labels only;
+6. Use `../../docs/localization.md` before changing UI language behavior. Localize static UI labels only;
    do not translate sourced data, CSV headers, or stored status values.
 
 The invariant is: collect broadly, preserve source evidence, verify identity, classify explicitly,
@@ -100,8 +143,10 @@ boundary before changing tables.
 
 ## Workspace Contract
 
-- `configs/domain.json`: project-specific terms, venues, source-pass plan, and identity sources.
+- `configs/domain.json`: project-specific terms, venues, source-pass plan, identity sources, and
+  sentinel checks.
 - `raw/source_records.csv`: extracted source evidence and intermediate records.
+- `raw/shards/`: optional per-subagent or per-source-batch raw rows before merge.
 - `tables/entities_final.csv`: canonical public fact table for people/groups.
 - `tables/entities_review_or_excluded.csv`: weak, adjacent, duplicate, outdated, or off-scope records.
 - `tables/positions_current.csv`: current opportunity records with retrieval dates.
@@ -130,3 +175,8 @@ cat ./my-workspace/audit/quality_report.json
 When facts are time-sensitive, browse or use a current API and record `retrieved_at`, source URL,
 and metric source. Do not infer current roles, deadlines, metrics, or publication evidence from
 memory.
+
+Before the final response on a substantial pass, deposit reusable lessons in `audit/`: good and bad
+sources, false-positive patterns, aliases, API limits, failed queries, manual merge decisions,
+coverage gaps, and the next source passes. Future agents should inherit the method, not only the
+latest table.

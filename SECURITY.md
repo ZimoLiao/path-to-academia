@@ -50,4 +50,4 @@ plugin bundle. Review `install.sh` and `install-claude.sh` before running them i
 environments.
 
 The release gate checks source distribution contents, wheel contents, and a wheel install smoke
-test. It does not sign artifacts in 1.0.0.
+test. It does not sign artifacts in 1.x.

@@ -6,6 +6,21 @@ specific meaning belongs in `configs/domain.json`, not in code.
 The canonical field descriptions live in `path_to_academia.schemas.FIELD_DESCRIPTIONS`, and tests require
 every schema field to have one description. This page explains how to interpret the tables.
 
+## Domain Config
+
+File: `configs/domain.json`
+
+Purpose: project-specific rules that should not become hardcoded schema fields.
+
+Important keys:
+
+- `domain`: inclusion, review, and exclusion terms.
+- `evidence`: target venues and accepted identity sources.
+- `source_passes`: planned source-family passes with stable batch names.
+- `sentinel_checks`: user-provided coverage probes such as must-include people, groups, roles,
+  venues, institutions, or source families. Each sentinel must appear in outputs or receive an
+  explicit audit explanation.
+
 ## Raw Source Records
 
 File: `raw/source_records.csv`
@@ -23,6 +38,9 @@ Important fields:
   not final proof.
 - `extraction_method`: how the row was produced.
 - `notes`: caveats and source limitations.
+
+For large jobs, shard outputs may be written under `raw/shards/` before merge. Shard files should
+use the same fields or a documented fixed schema and remain available as provenance.
 
 ## Final Entity Table
 
@@ -62,6 +80,8 @@ File: `tables/entities_review_or_excluded.csv`
 
 Purpose: preserve candidates that were weak, ambiguous, duplicate, stale, adjacent, or outside the
 project definition. Do not delete these records silently; they are audit evidence.
+
+Per-worker review shards may be staged under `tables/shards/` before merging into this table.
 
 ## Current Positions
 
