@@ -37,7 +37,7 @@ ecosystem repositories. It is not a feature parity target; it is a release-readi
 
 The agent-native scorecard is maintained separately in [agent-native-audit.md](agent-native-audit.md).
 
-## Intentional Non-Goals For 1.0.0
+## Intentional Non-Goals For 1.x
 
 - Hosted documentation site.
 - Signed release artifacts or SBOM generation.

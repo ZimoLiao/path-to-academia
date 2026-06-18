@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1 - 2026-06-18
+
+- Updated the `path-to-academia` skill to parallelize source collection by default after Guided
+  Intake, using the maximum practical subagent capacity available in the current agent harness.
+- Documented the default shard contract for parallel workers and the sequential fallback when
+  subagents are unavailable.
+
 ## 1.0.0 - 2026-06-17
 
 - Added the initial path to academia package and Codex/Claude Code plugin.

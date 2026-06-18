@@ -207,7 +207,7 @@ python3 -m py_compile $(find src scripts -name '*.py')
 
 ## Version
 
-Current release: `1.0.0`.
+Current release: `1.0.1`.
 
 ## License
 

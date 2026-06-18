@@ -39,6 +39,22 @@ After intake, write the assumptions into `configs/domain.json` and keep unclear 
 Use `--example empty` for real projects after intake. Use `--example ml-bio` only for demos, tests,
 or when the user explicitly asks for a starter example.
 
+## Default Parallel Collection
+
+After Guided Intake, plan source passes as independent shards and parallelize by default. Do not
+wait for the user to ask for parallelism. Use the maximum number of subagents the current harness
+can practically support, bounded by available tooling, source rate limits, and the need for clean
+mergeable outputs.
+
+If subagents are available, assign each worker a distinct source pass, direction shard, geography,
+venue/award pass, open-position board, or enrichment task. The main agent owns coordination,
+deduplication, QA, final exports, and user-facing synthesis. If subagents are unavailable, execute
+the same shard plan sequentially and note that limitation in `audit/`.
+
+Load `../../docs/sharding.md` before dispatching workers. Every shard must return source rows,
+candidate rows, review/excluded rows, retrieval dates, source URLs, identity evidence, unresolved
+questions, and an audit note. Never let parallel workers write private outreach state.
+
 ## Quick Start
 
 From the plugin root:

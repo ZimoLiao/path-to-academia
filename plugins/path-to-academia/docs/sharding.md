@@ -4,6 +4,23 @@ path to academia supports multi-agent collection by treating each pass as a shar
 clear input, output, and audit note. Shards should be mergeable without relying on hidden chat
 context.
 
+## Default Parallelism
+
+Parallel sharding is the default after Guided Intake. The agent should quietly use the maximum
+available subagent capacity the current environment supports, rather than making the user request
+parallel work explicitly.
+
+Apply these rules:
+
+- Split source collection and enrichment into independent shards before dispatch.
+- Use as many subagents as the harness can practically run, bounded by source rate limits, tool
+  availability, and clean merge boundaries.
+- Keep one main agent responsible for coordination, merge, deduplication, QA, exports, and final
+  reporting.
+- If subagents are unavailable, run the same shard plan sequentially and record the limitation in
+  `audit/`.
+- Do not let workers edit `ui_state/` or private outreach fields.
+
 ## Shard Contract
 
 Each worker should produce:
