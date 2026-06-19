@@ -1,7 +1,9 @@
 # path to academia plugin
 
-This is the installable plugin bundle for `path-to-academia`. The repository root registers this
-bundle through:
+path to academia is a plugin for Claude Code, Codex, and compatible coding agents that helps you
+find potential PhD or postdoc supervisors, labs, and open academic positions.
+
+This directory is the installable plugin bundle. The repository root registers it through:
 
 ```text
 .agents/plugins/marketplace.json

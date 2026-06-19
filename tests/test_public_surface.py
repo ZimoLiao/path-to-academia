@@ -62,6 +62,23 @@ def test_readme_current_release_matches_project_version() -> None:
     assert readme_match.group(1) == version_match.group(1)
 
 
+def test_readme_opens_with_plain_product_purpose() -> None:
+    root = Path(__file__).resolve().parents[1]
+    readme = (root / "README.md").read_text(encoding="utf-8")
+    plugin_readme = (root / "plugins" / "path-to-academia" / "README.md").read_text(encoding="utf-8")
+    first_paragraph = readme.split("\n\n", 2)[1].lower()
+    plugin_first_paragraph = plugin_readme.split("\n\n", 2)[1].lower()
+
+    for text in [first_paragraph, plugin_first_paragraph]:
+        assert "plugin" in text
+        assert "claude code" in text
+        assert "codex" in text
+        assert "phd" in text
+        assert "postdoc" in text
+        assert "supervisors" in text
+        assert "positions" in text
+
+
 def test_release_metadata_versions_match_project_version() -> None:
     root = Path(__file__).resolve().parents[1]
     pyproject = (root / "pyproject.toml").read_text(encoding="utf-8")

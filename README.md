@@ -1,9 +1,12 @@
 # path to academia
 
-path to academia is an agent-native workspace and Codex/Claude Code plugin for building audited
-academic opportunity databases. It helps agents collect source records, verify identity, merge
-people and groups, track current roles, export Excel-friendly tables, and browse records locally
-without mixing private outreach notes into public facts.
+path to academia is a plugin for Claude Code, Codex, and compatible coding agents that helps you
+find potential PhD or postdoc supervisors, labs, and open academic positions.
+
+Tell the agent your research direction and constraints; the plugin guides it to ask the right
+intake questions, search current sources, verify identities, save auditable evidence, export
+CSV/XLSX files, and browse candidates in a local UI without mixing private outreach notes into
+public facts.
 
 The default example is intentionally generic: machine learning and biology. The workflow is
 configured through `configs/domain.json`, so a new project can define its own inclusion terms,
