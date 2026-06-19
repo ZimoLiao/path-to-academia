@@ -6,78 +6,127 @@ find potential PhD or postdoc supervisors, labs, and open academic positions.
 Tell the agent your research direction and constraints; it asks the right questions, searches
 current sources, saves a traceable candidate table, and opens a Web UI for review.
 
-The default example is intentionally generic: machine learning and biology. The workflow is
-configured through `configs/domain.json`, so a new project can define its own inclusion terms,
-named evidence filters, source passes, and evidence rules without changing the schema.
+## Getting Started
 
-## Guided Intake For Agents
+After installing the plugin, start a new agent session and ask it to use `path-to-academia`.
 
-When a coding agent uses this plugin for a new project, it should start by asking the user for the
-basic research brief instead of immediately collecting sources. Do not start source collection until
-the answers are clear enough to write or update `configs/domain.json`.
-
-Ask for:
-
-- research direction: field, subfield, methods, application area, and boundary cases.
-- opportunity type: people, groups, labs, open postdoc roles, fellowships, calls, or all of these.
-- constraints: career stage, institution type, seniority, funding, visa, remote/on-site, deadlines,
-  language, or collaboration requirements.
-- geographic scope: countries, regions, institutions, and explicit exclusions.
-- named evidence filters: a short user-owned list of concrete evidence items used for filtering and
-  prioritization. Use the actual journal name, conference name, medal name, fellowship name, academy
-  name, named program, or a similarly precise label with a brief description.
-- honor sources: awards, medals, fellowships, academies, invited/keynote lists, editorial boards, or
-  committee lists worth reverse-scanning.
-- age policy: whether PI age should be collected, which public sources or transparent estimates are
-  acceptable, and whether unreliable age should stay blank.
-- identity links and metrics: official profile types, Google Scholar author pages, ORCID, OpenAlex,
-  Semantic Scholar, publication evidence, citation metrics, and recency requirements.
-- other constraints: an open-ended prompt for anything else the user wants emphasized, avoided, or
-  handled carefully.
-- sentinel checks: must-include people, groups, roles, journals, conferences, institutions, or source families that
-  must appear or receive an explicit audit explanation.
-- output format: local UI, CSV, wrapped XLSX, audit notes, private outreach state, or a publishable
-  repository.
-
-Ask these as separate questions. If the user is unsure, offer a compact provisional starter list and
-record that assumption in `audit/`.
-
-If the user wants a fast default, initialize the machine-learning-and-biology example and write the
-assumptions into `audit/`.
-
-For a real project after Guided Intake, prefer starting from an empty configurable workspace:
-
-```bash
-path-to-academia init ./workspace --example empty
+```text
+Use path-to-academia to find postdoc supervisors in computational biology.
+Ask me the intake questions first, then create a workspace and collect auditable candidates.
 ```
 
-## What It Gives You
+The agent should first ask about your field, degree or role type, geography, deadlines, evidence
+filters, honor sources, age policy, Google Scholar links, and any extra constraints.
+Do not start source collection until the basic brief is clear.
 
-- A reproducible workspace layout for raw evidence, final tables, review tables, audit reports,
-  private outreach state, and local UI state.
-- A Python CLI with no runtime dependencies beyond the standard library.
-- An agent plugin skill that teaches Codex, Claude Code, and compatible tools the collection and QA process.
-- CSV and wrapped XLSX exports for human review.
-- A local web UI for filtering records and editing private status sidecars.
-- Static UI localization for English, Chinese, Japanese, Korean, French, German, Spanish, and Brazilian Portuguese.
-- Tests that guard the public package against private-domain residue.
+## Quick Example
 
-## Quick Start
+Try the built-in machine-learning-and-biology demo:
 
 ```bash
 git clone https://github.com/ZimoLiao/path-to-academia.git
 cd path-to-academia
 python3 -m pip install -e .
 path-to-academia init ./workspace --example ml-bio
+path-to-academia qa ./workspace
+path-to-academia serve ./workspace --port 8765
+```
+
+Then open `http://127.0.0.1:8765/`.
+
+For a real project, start with an empty configurable workspace:
+
+```bash
+path-to-academia init ./workspace --example empty
+```
+
+## Install
+
+### Claude Code
+
+```text
+/plugin marketplace add ZimoLiao/path-to-academia
+/plugin install path-to-academia@path-to-academia
+/reload-plugins
+```
+
+Invoke the skill with:
+
+```text
+/path-to-academia:path-to-academia
+```
+
+### Codex
+
+```bash
+codex plugin marketplace add ZimoLiao/path-to-academia
+codex plugin add path-to-academia@path-to-academia
+```
+
+If your Codex build installs plugins through the TUI, run `codex`, open `/plugins`, choose the
+**path to academia** marketplace, and install **path-to-academia**.
+
+### Local Checkout
+
+```bash
+codex plugin marketplace add "$PWD"
+codex plugin add path-to-academia@path-to-academia
+```
+
+```text
+/plugin marketplace add /absolute/path/to/path-to-academia
+/plugin install path-to-academia@path-to-academia
+/reload-plugins
+```
+
+The convenience scripts `./install.sh` and `./install-claude.sh` wrap the same local marketplace
+flow for smoke testing.
+
+## What It Creates
+
+`path-to-academia` creates a local workspace with:
+
+| Path | Purpose |
+|------|---------|
+| `configs/domain.json` | Research direction, constraints, evidence filters, source plan |
+| `raw/source_records.csv` | Source-level evidence collected from profiles, lists, papers, and job boards |
+| `tables/entities_final.csv` | Candidate supervisors, labs, or groups ready for review |
+| `tables/entities_review_or_excluded.csv` | Weak, duplicate, stale, or off-scope candidates kept for audit |
+| `tables/positions_current.csv` | Current PhD, postdoc, fellowship, or academic role listings |
+| `ui_state/outreach_status.csv` | Private outreach status and notes, kept separate from public facts |
+| `audit/` | QA reports, source-pass notes, merge decisions, and coverage gaps |
+
+The local Web UI reads the workspace, lets you filter candidates, and edits only the private status
+sidecar.
+
+## Workflow
+
+1. Guided Intake: ask for the research direction, opportunity type, constraints, and output format.
+2. Source collection: search official pages, scholarly profiles, named evidence filters, honors,
+   conferences, job boards, and user-provided sources.
+3. Identity verification: prefer official profiles, Google Scholar, ORCID, OpenAlex, Semantic
+   Scholar, lab pages, and persistent source URLs.
+4. Evidence fields: write concrete labels such as journal names, conference names, medals, and
+   fellowships into `evidence_items`.
+5. Age fields: collect `birth_year`, `age`, `age_as_of`, and `age_evidence` only when the source is
+   public or the estimate is transparent.
+6. QA and export: run quality checks, export wrapped XLSX files, and review candidates in the Web
+   UI.
+
+The skill also tells agents to parallelize source passes when possible and to write rows
+incrementally instead of browsing many pages before saving data.
+
+## CLI
+
+```bash
+path-to-academia init ./workspace --example empty
 path-to-academia context ./workspace
 path-to-academia qa ./workspace
 path-to-academia export-xlsx ./workspace/tables/entities_final.csv ./workspace/tables/entities_final_wrapped.xlsx
 path-to-academia serve ./workspace --port 8765
 ```
 
-Then open `http://127.0.0.1:8765/`.
-
-Without installing the package:
+You can run the same commands without installing the package:
 
 ```bash
 python3 scripts/init_workspace.py ./workspace --example ml-bio
@@ -87,124 +136,15 @@ python3 scripts/export_wrapped_xlsx.py ./workspace/tables/entities_final.csv ./w
 python3 scripts/serve_web.py ./workspace --port 8765
 ```
 
-## Install
+## Documentation
 
-### Codex
-
-After the repository is public:
-
-```bash
-codex plugin marketplace add ZimoLiao/path-to-academia
-codex plugin add path-to-academia@path-to-academia
-```
-
-For local development from this checkout:
-
-```bash
-codex plugin marketplace add "$PWD"
-codex plugin add path-to-academia@path-to-academia
-```
-
-After installing, start a new Codex thread and ask it to use `path-to-academia`, or invoke the skill
-directly if your Codex UI exposes skill selection. If your Codex build only exposes plugin
-installation through the TUI, run `codex`, open `/plugins`, select the **path to academia**
-marketplace, and install **path-to-academia**.
-
-### Claude Code
-
-After the repository is public:
-
-```text
-/plugin marketplace add ZimoLiao/path-to-academia
-/plugin install path-to-academia@path-to-academia
-```
-
-For local development from this checkout:
-
-```text
-/plugin marketplace add /absolute/path/to/path-to-academia
-/plugin install path-to-academia@path-to-academia
-/reload-plugins
-```
-
-Start Claude Code, or run `/reload-plugins` in an existing Claude Code session, then invoke:
-
-```text
-/path-to-academia:path-to-academia
-```
-
-### Local Convenience Scripts
-
-The scripts below wrap the same marketplace flow for a local checkout. They are useful for smoke
-testing, but they are not the primary public install path.
-
-```bash
-./install.sh
-./install-claude.sh
-```
-
-This repository follows the marketplace layout used by mature agent plugin repos:
-
-```text
-.agents/plugins/marketplace.json
-.claude-plugin/marketplace.json
-plugins/path-to-academia/
-  .codex-plugin/plugin.json
-  .claude-plugin/plugin.json
-  skills/path-to-academia/SKILL.md
-```
-
-## Workspace Layout
-
-```text
-workspace/
-  configs/domain.json
-  raw/source_records.csv
-  tables/entities_final.csv
-  tables/entities_review_or_excluded.csv
-  tables/positions_current.csv
-  audit/quality_report.json
-  ui_state/outreach_status.csv
-```
-
-The fact table and private status sidecar are intentionally separate. Agents may read both for the
-local UI, but status fields must never be written back into `tables/entities_final.csv`.
-
-For agent handoff or a fresh coding session, print the current workspace context:
-
-```bash
-path-to-academia context ./workspace
-```
-
-## Core Workflow
-
-1. Define the domain in `configs/domain.json`.
-2. Extract source records into `raw/source_records.csv`.
-3. Verify identities with official pages, persistent identifiers, scholarly indexes, or credible
-   publication profiles.
-4. Classify each row as included, review, or excluded with explicit evidence.
-5. Merge conservatively and preserve all source URLs and source names.
-6. Run QA, regenerate wrapped XLSX files, and write audit notes.
-7. Use the UI state sidecar for private outreach progress.
-
-More detail is in [docs/workflow.md](docs/workflow.md).
-Field semantics are defined in [docs/schema.md](docs/schema.md).
-Localization boundaries are defined in [docs/localization.md](docs/localization.md).
-The system architecture is summarized in [docs/architecture.md](docs/architecture.md), and local
-data/privacy boundaries are in [docs/privacy.md](docs/privacy.md).
-
-## Repository Quality
-
-- Release checks are listed in [docs/release-checklist.md](docs/release-checklist.md).
-- The benchmark against mature plugin and extension repositories is in
-  [docs/benchmark-audit.md](docs/benchmark-audit.md).
-- The agent-native architecture audit is in [docs/agent-native-audit.md](docs/agent-native-audit.md).
-- Contribution rules are in [CONTRIBUTING.md](CONTRIBUTING.md).
-- Project conduct rules are in [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
-- Security reporting and local-server scope are in [SECURITY.md](SECURITY.md).
-- Citation metadata for academic use is in [CITATION.cff](CITATION.cff).
-- Changes should preserve the rule that blank enrichment means unknown or not collected, not
-  negative evidence.
+- [Workflow](docs/workflow.md)
+- [Collection playbook](docs/collection-playbook.md)
+- [Schema](docs/schema.md)
+- [Plugin install](docs/plugin-install.md)
+- [Quality gates](docs/quality-gates.md)
+- [Privacy](docs/privacy.md)
+- [Release checklist](docs/release-checklist.md)
 
 ## Development
 
