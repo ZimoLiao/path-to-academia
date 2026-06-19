@@ -6,6 +6,8 @@ find potential PhD or postdoc supervisors, labs, and open academic positions.
 Tell the agent your research direction and constraints; it asks the right questions, searches
 current sources, saves a traceable candidate table, and opens a Web UI for review.
 
+![path to academia biology demo Web UI](docs/assets/path-to-academia-biology-demo.png)
+
 ## Getting Started
 
 After installing the plugin, start a new agent session and ask it to use `path-to-academia`.

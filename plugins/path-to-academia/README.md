@@ -3,6 +3,8 @@
 path to academia is a plugin for Claude Code, Codex, and compatible coding agents that helps you
 find potential PhD or postdoc supervisors, labs, and open academic positions.
 
+![path to academia biology demo Web UI](docs/assets/path-to-academia-biology-demo.png)
+
 ## Getting Started
 
 After installing, invoke `path-to-academia` and tell the agent what you want to study and where you
