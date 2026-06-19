@@ -24,6 +24,12 @@ SOURCE_FIELDS = [
     "raw_text",
     "extraction_method",
     "notes",
+    "evidence_items",
+    "evidence_summary",
+    "birth_year",
+    "age",
+    "age_as_of",
+    "age_evidence",
 ]
 
 ENTITY_FIELDS = [
@@ -56,6 +62,12 @@ ENTITY_FIELDS = [
     "relevance_reason",
     "relevance_evidence",
     "notes",
+    "evidence_items",
+    "evidence_summary",
+    "birth_year",
+    "age",
+    "age_as_of",
+    "age_evidence",
 ]
 
 POSITION_FIELDS = [
@@ -127,10 +139,16 @@ FIELD_DESCRIPTIONS = {
     "citation_count": "Bibliometric citation-count snapshot from the stated metric source.",
     "metric_h_index": "Raw-source h-index value before final entity normalization.",
     "metric_source": "Source and retrieval context for metrics; leave values blank rather than guessing.",
+    "birth_year": "Publicly sourced or explicitly estimated birth year; leave blank when evidence is unreliable.",
+    "age": "Numeric age as of age_as_of when publicly sourced or transparently estimated; leave blank rather than guessing.",
+    "age_as_of": "Date for the age snapshot, normally YYYY-MM-DD.",
+    "age_evidence": "Source, public biographical clue, or caveat supporting the age value or estimate.",
     "honors": "Awards, fellowships, invited distinctions, or comparable recognition relevant to prioritization.",
-    "target_venue_exact": "yes/no flag for verified evidence in the project-configured target journal/conference list.",
-    "target_venue_family": "yes/no flag for verified evidence in the related journal/conference family list configured by the project.",
-    "target_publication_evidence": "Concise evidence for target journal/conference or related journal/conference publications.",
+    "evidence_items": "Concrete semicolon-separated evidence labels found for this row, such as exact journal names, conference names, medals, fellowships, academies, invited/keynote lists, or named programs.",
+    "evidence_summary": "Concise human-readable explanation of the evidence_items labels and why they matter for prioritization.",
+    "target_venue_exact": "Legacy yes/no compatibility flag for exact matches against configs/domain.json evidence.target_venues; prefer evidence_items for new work.",
+    "target_venue_family": "Legacy yes/no compatibility flag for matches against configs/domain.json evidence.related_venue_families; prefer evidence_items for new work.",
+    "target_publication_evidence": "Legacy publication-evidence summary kept for older workspaces; prefer evidence_items and evidence_summary for new work.",
     "relevance_status": "Classification such as include, review, adjacent, excluded, or stale.",
     "relevance_reason": "Short machine-readable reason for the classification.",
     "relevance_evidence": "Human-readable evidence explaining why the row is included or held for review.",

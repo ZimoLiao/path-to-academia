@@ -34,18 +34,41 @@ def example_config() -> dict[str, object]:
         "constraints": {
             "opportunity_types": ["people", "groups", "open roles"],
             "geographic_scope": ["global"],
+            "age_policy": "Collect only public sourced or clearly estimated age; leave blank when unreliable.",
             "additional_constraints": [
                 "prioritize active groups with auditable source links"
             ],
         },
         "evidence": {
-            "target_venues": ["Nature", "Science", "Cell", "NeurIPS", "ICML", "ICLR"],
-            "related_venue_families": [
-                "Nature Portfolio",
-                "Cell Press",
-                "major machine learning conferences",
-                "computational biology journals and conferences",
+            "named_evidence_filters": [
+                {
+                    "name": "Nature",
+                    "type": "journal",
+                    "description": "Exact Nature journal evidence; keep separate from broader publisher families.",
+                },
+                {
+                    "name": "Science",
+                    "type": "journal",
+                    "description": "Exact Science journal evidence; keep separate from broader publisher families.",
+                },
+                {
+                    "name": "NeurIPS",
+                    "type": "conference",
+                    "description": "Named machine-learning conference evidence for method-focused rows.",
+                },
+                {
+                    "name": "Cell Systems",
+                    "type": "journal",
+                    "description": "Named computational-biology journal evidence.",
+                },
+                {
+                    "name": "Example Academy Fellowship",
+                    "type": "honor",
+                    "description": "Synthetic fellowship used to demonstrate medal or fellowship filters.",
+                },
             ],
+            "target_venues": [],
+            "related_venue_families": [],
             "honor_sources": [
                 "academy fellowships",
                 "society fellows and awards",
@@ -84,9 +107,11 @@ def empty_config() -> dict[str, object]:
         "constraints": {
             "opportunity_types": [],
             "geographic_scope": [],
+            "age_policy": "Collect only public sourced or clearly estimated age; leave blank when unreliable.",
             "additional_constraints": [],
         },
         "evidence": {
+            "named_evidence_filters": [],
             "target_venues": [],
             "related_venue_families": [],
             "honor_sources": [],
@@ -105,6 +130,12 @@ def empty_config() -> dict[str, object]:
 
 def example_entities() -> list[dict[str, str]]:
     retrieved_at = now_iso()
+    snapshot_date = retrieved_at.split("T", 1)[0]
+    snapshot_year = int(snapshot_date[:4])
+
+    def synthetic_age(birth_year: int) -> str:
+        return str(snapshot_year - birth_year)
+
     return [
         {
             "retrieved_at": retrieved_at,
@@ -128,7 +159,13 @@ def example_entities() -> list[dict[str, str]]:
             "h_index": "42",
             "citation_count": "12000",
             "metric_source": "synthetic example",
+            "birth_year": "1982",
+            "age": synthetic_age(1982),
+            "age_as_of": snapshot_date,
+            "age_evidence": "Synthetic public-profile birth-year example for product demonstration.",
             "honors": "Example Academy Fellowship; Example Early Career Medal",
+            "evidence_items": "Nature Machine Intelligence; NeurIPS; Example Academy Fellowship; Example Early Career Medal",
+            "evidence_summary": "Synthetic named evidence filters matched: Nature Machine Intelligence, NeurIPS, Example Academy Fellowship, and Example Early Career Medal.",
             "target_venue_exact": "yes",
             "target_venue_family": "yes",
             "target_publication_evidence": "Synthetic NeurIPS and Nature Machine Intelligence evidence.",
@@ -159,7 +196,13 @@ def example_entities() -> list[dict[str, str]]:
             "h_index": "35",
             "citation_count": "8400",
             "metric_source": "synthetic example",
+            "birth_year": "1988",
+            "age": synthetic_age(1988),
+            "age_as_of": snapshot_date,
+            "age_evidence": "Synthetic public-profile birth-year example for product demonstration.",
             "honors": "",
+            "evidence_items": "Cell Systems; ISMB",
+            "evidence_summary": "Synthetic named evidence filters matched: Cell Systems and ISMB.",
             "target_venue_exact": "no",
             "target_venue_family": "yes",
             "target_publication_evidence": "Synthetic Cell Systems evidence.",
@@ -190,10 +233,16 @@ def example_entities() -> list[dict[str, str]]:
             "h_index": "29",
             "citation_count": "5100",
             "metric_source": "synthetic example",
+            "birth_year": "1990",
+            "age": synthetic_age(1990),
+            "age_as_of": snapshot_date,
+            "age_evidence": "Synthetic public-profile birth-year example for product demonstration.",
             "honors": "Example Translational Research Fellowship; Example Biomedical AI Prize",
+            "evidence_items": "Nature Medicine; Example Translational Research Fellowship; Example Biomedical AI Prize",
+            "evidence_summary": "Synthetic named evidence filters matched: Nature Medicine and two translational AI honors.",
             "target_venue_exact": "no",
             "target_venue_family": "yes",
-            "target_publication_evidence": "Synthetic medical AI journal/conference evidence.",
+            "target_publication_evidence": "Synthetic Nature Medicine evidence.",
             "relevance_status": "include",
             "relevance_reason": "domain_terms_in_profile",
             "relevance_evidence": "Official example profile describes biomedical AI and clinical translation.",
@@ -227,6 +276,12 @@ def example_sources() -> list[dict[str, str]]:
                 "metric_source": row["metric_source"],
                 "citation_count": row["citation_count"],
                 "honors": row["honors"],
+                "evidence_items": row["evidence_items"],
+                "evidence_summary": row["evidence_summary"],
+                "birth_year": row["birth_year"],
+                "age": row["age"],
+                "age_as_of": row["age_as_of"],
+                "age_evidence": row["age_evidence"],
                 "raw_text": row["summary_text"],
                 "extraction_method": "synthetic seed",
                 "notes": row["notes"],

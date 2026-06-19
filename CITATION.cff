@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use path to academia in published work, please cite the software repository."
 title: "path to academia"
-version: "1.0.5"
+version: "1.0.6"
 date-released: "2026-06-19"
 license: "MIT"
 url: "https://github.com/ZimoLiao/path-to-academia"

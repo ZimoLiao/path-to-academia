@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
+import textwrap
 import threading
 import urllib.request
 from http.server import ThreadingHTTPServer
 from pathlib import Path
+
+import pytest
 
 from path_to_academia.web import WorkspaceHandler, make_handler
 from path_to_academia.workspace import init_workspace
@@ -52,6 +57,9 @@ def test_static_ui_exposes_core_workspace_controls() -> None:
         "statusFilters",
         "minH",
         "minCites",
+        "minAge",
+        "maxAge",
+        "evidenceFacetList",
         "last_contacted",
         "next_action_date",
         "dossier.sourceProvenance",
@@ -72,7 +80,7 @@ def test_static_ui_makes_profile_links_and_evidence_badges_actionable() -> None:
         "link.homepage",
         'data-evidence-section="${escapeAttr(sectionName)}"',
         'evidenceBadge(row, "honors"',
-        'evidenceBadge(row, "targetPublication"',
+        'evidenceBadge(row, "evidence"',
         "function focusDossierSection",
         'event.target.closest("a, button',
         "function linkifyText",
@@ -192,8 +200,8 @@ def test_plugin_docs_start_with_guided_agent_intake() -> None:
         "research direction",
         "constraints",
         "geographic scope",
-        "target journals/conferences",
-        "related journal/conference families",
+        "named evidence filters",
+        "age",
         "honor sources",
         "Google Scholar",
         "output format",
@@ -203,45 +211,194 @@ def test_plugin_docs_start_with_guided_agent_intake() -> None:
         assert phrase in surface
 
 
-def test_static_ui_uses_clear_journal_conference_labels() -> None:
+def test_static_ui_uses_named_evidence_and_age_labels() -> None:
     root = Path(__file__).resolve().parents[1]
     i18n = json.loads((root / "src" / "path_to_academia" / "webui" / "static" / "i18n.json").read_text(encoding="utf-8"))
 
-    assert i18n["en"]["filters.targetJournalConference"] == "Target journal/conference"
-    assert i18n["en"]["filters.relatedJournalConference"] == "Related journal/conference family"
-    assert i18n["en"]["sort.journalConference"] == "Journal/conference evidence"
-    assert i18n["en"]["badge.targetJournalConference"] == "Target journal/conference"
-    assert i18n["en"]["badge.relatedJournalConference"] == "Related journal/conference"
-    assert i18n["en"]["dossier.targetPublication"] == "Target journal/conference evidence"
-    assert i18n["zh-CN"]["filters.targetJournalConference"] == "重点期刊/会议"
-    assert i18n["zh-CN"]["filters.relatedJournalConference"] == "相关期刊/会议系列"
-    assert i18n["zh-CN"]["sort.journalConference"] == "期刊/会议证据"
+    assert i18n["en"]["filters.evidenceItems"] == "Evidence items"
+    assert i18n["en"]["filters.age"] == "Age"
+    assert i18n["en"]["filters.minAge"] == "Min age"
+    assert i18n["en"]["filters.maxAge"] == "Max age"
+    assert i18n["en"]["sort.evidence"] == "Evidence items"
+    assert i18n["en"]["dossier.evidenceSummary"] == "Evidence summary"
+    assert i18n["en"]["metrics.age"] == "Age"
+    assert i18n["zh-CN"]["filters.evidenceItems"] == "证据项"
+    assert i18n["zh-CN"]["filters.age"] == "年龄"
+    assert i18n["zh-CN"]["sort.evidence"] == "证据项"
 
 
-def test_static_ui_journal_conference_keys_are_wired_consistently() -> None:
+def test_static_ui_named_evidence_and_age_keys_are_wired_consistently() -> None:
     root = Path(__file__).resolve().parents[1]
     html = (root / "src" / "path_to_academia" / "webui" / "static" / "index.html").read_text(encoding="utf-8")
     js = (root / "src" / "path_to_academia" / "webui" / "static" / "app.js").read_text(encoding="utf-8")
     i18n = json.loads((root / "src" / "path_to_academia" / "webui" / "static" / "i18n.json").read_text(encoding="utf-8"))
 
-    filter_contracts = {
-        "targetJournalConference": "hasTargetJournalConference",
-        "relatedJournalConference": "hasRelatedJournalConference",
-    }
-    for filter_key, row_flag in filter_contracts.items():
-        assert f'data-filter="{filter_key}"' in html
-        assert f'"filters.{filter_key}"' in json.dumps(i18n["en"])
-        assert f"{filter_key}: false" in js
-        assert f"state.filters.{filter_key}" in js
-        assert f"!row.{row_flag}" in js
-        assert f"row.{row_flag}" in js
+    assert 'id="evidenceFacetList"' in html
+    assert 'id="minAge"' in html
+    assert 'id="maxAge"' in html
+    assert 'value="evidence"' in html
+    assert "evidenceItems: new Set()" in js
+    assert "function renderEvidenceFilters()" in js
+    assert "function buildEvidenceFacets()" in js
+    assert "function updateEvidenceFilterState()" in js
+    assert "function readFilterControls()" in js
+    assert "function recordHasSelectedEvidence(row, controls)" in js
+    assert "function evidenceScore(row)" in js
+    assert "sort === \"evidence\"" in js
+    assert "row.ageNum" in js
+    assert 'data-evidence-item="${escapeAttr(item)}"' in js
+    assert "sort.evidence" in i18n["en"]
 
-    assert 'value="journalConference"' in html
-    assert "sort === \"journalConference\"" in js
-    assert "function journalConferenceScore(row)" in js
-    assert "sort.journalConference" in i18n["en"]
-
-    stale_fragments = ["targetVenue", "relatedVenue", "sort.venue", "venueScore"]
+    stale_fragments = [
+        "targetJournalConference",
+        "relatedJournalConference",
+        "hasTargetJournalConference",
+        "hasRelatedJournalConference",
+        "sort.journalConference",
+        "journalConferenceScore",
+        "targetVenue",
+        "relatedVenue",
+        "sort.venue",
+        "venueScore",
+    ]
     surface = html + "\n" + js + "\n" + json.dumps(i18n)
     for fragment in stale_fragments:
         assert fragment not in surface
+
+
+def test_static_ui_derives_evidence_facets_for_legacy_rows() -> None:
+    root = Path(__file__).resolve().parents[1]
+    js = (root / "src" / "path_to_academia" / "webui" / "static" / "app.js").read_text(encoding="utf-8")
+
+    assert "function parseEvidenceItems(row)" in js
+    assert "function legacyEvidenceItems(row)" in js
+    assert "LEGACY_EXACT_EVIDENCE_ITEM" in js
+    assert "function ageValue(value)" in js
+
+
+def test_static_ui_filter_logic_handles_named_legacy_evidence_and_age() -> None:
+    if not shutil.which("node"):
+        pytest.skip("node is unavailable")
+
+    root = Path(__file__).resolve().parents[1]
+    app_js = (root / "src" / "path_to_academia" / "webui" / "static" / "app.js").read_text(encoding="utf-8")
+    harness = """
+const results = [];
+state.translations = {
+  en: {
+    "metrics.age": "Age",
+    "metric.h": "h",
+    "metric.citations": "citations",
+  }
+};
+state.language = "en";
+els.searchInput = { value: "" };
+els.minH = { value: "" };
+els.minCites = { value: "" };
+els.minAge = { value: "" };
+els.maxAge = { value: "" };
+els.countrySelect = { value: "" };
+els.sortSelect = { value: "evidence" };
+els.evidenceFacetList = {
+  innerHTML: "",
+  querySelectorAll() { return []; },
+  addEventListener() {},
+};
+state.statuses = new Map();
+state.records = [
+  enrichRecord({
+    person_key: "new",
+    name: "New Evidence",
+    institution: "A",
+    country: "US",
+    domain_tags: "ml",
+    h_index: "10",
+    citation_count: "100",
+    age: "44",
+    honors: "",
+    evidence_items: "Nature; NeurIPS",
+    evidence_summary: "Named evidence",
+    target_venue_exact: "yes",
+    target_venue_family: "no",
+  }),
+  enrichRecord({
+    person_key: "legacy",
+    name: "Legacy Evidence",
+    institution: "B",
+    country: "UK",
+    domain_tags: "bio",
+    h_index: "8",
+    citation_count: "80",
+    age: "38",
+    honors: "Legacy Medal",
+    evidence_items: "",
+    target_publication_evidence: "Science; Cell",
+    target_venue_exact: "yes",
+    target_venue_family: "yes",
+  }),
+  enrichRecord({
+    person_key: "blank-age",
+    name: "Blank Age",
+    institution: "C",
+    country: "CA",
+    domain_tags: "bio",
+    h_index: "5",
+    citation_count: "50",
+    age: "",
+    honors: "",
+    evidence_items: "Cell",
+  }),
+];
+state.evidenceFacets = buildEvidenceFacets();
+results.push(["facets", state.evidenceFacets.map(([item]) => item)]);
+
+    state.filters.evidenceItems = new Set(["Exact configured evidence"]);
+    let controls = readFilterControls();
+    results.push(["legacyExact", state.records.filter((row) => rowMatchesControls(row, controls)).map((row) => row.name)]);
+
+    state.filters.evidenceItems = new Set();
+    els.minAge.value = "40";
+controls = readFilterControls();
+results.push(["minAge40", state.records.filter((row) => rowMatchesControls(row, controls)).map((row) => row.name)]);
+
+els.minAge.value = "";
+els.maxAge.value = "39";
+controls = readFilterControls();
+    results.push(["maxAge39", state.records.filter((row) => rowMatchesControls(row, controls)).map((row) => row.name)]);
+
+    els.maxAge.value = "99";
+    state.records[2].age = "unknown, born 1980";
+    state.records[2].ageNum = ageValue(state.records[2].age);
+    controls = readFilterControls();
+    results.push(["nonNumericAge", state.records.filter((row) => rowMatchesControls(row, controls)).map((row) => row.name)]);
+
+state.filtered = [...state.records];
+sortRows();
+results.push(["sorted", state.filtered.map((row) => row.name)]);
+process.stdout.write(JSON.stringify(results));
+"""
+    script = textwrap.dedent(
+        f"""
+        const document = {{
+          documentElement: {{}},
+          addEventListener() {{}},
+          querySelectorAll() {{ return []; }},
+          getElementById() {{ return null; }},
+        }};
+        const window = {{ setTimeout() {{}} }};
+        const localStorage = {{ getItem() {{ return null; }}, setItem() {{}} }};
+        const navigator = {{ languages: ["en"], language: "en" }};
+        {app_js}
+        {harness}
+        """
+    )
+    completed = subprocess.run(["node"], input=script, text=True, capture_output=True, check=True)
+    result = dict(json.loads(completed.stdout))
+
+    assert {"Nature", "NeurIPS", "Exact configured evidence", "Related configured evidence", "Legacy Medal"}.issubset(set(result["facets"]))
+    assert "Science" not in set(result["facets"])
+    assert result["legacyExact"] == ["Legacy Evidence"]
+    assert result["minAge40"] == ["New Evidence"]
+    assert result["maxAge39"] == ["Legacy Evidence"]
+    assert "Blank Age" not in result["nonNumericAge"]
+    assert result["sorted"][0] == "Legacy Evidence"

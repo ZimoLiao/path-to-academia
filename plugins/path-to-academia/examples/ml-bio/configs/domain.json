@@ -32,25 +32,41 @@
     "geographic_scope": [
       "global"
     ],
+    "age_policy": "Collect only public sourced or clearly estimated age; leave blank when unreliable.",
     "additional_constraints": [
       "prioritize active groups with auditable source links"
     ]
   },
   "evidence": {
-    "target_venues": [
-      "Nature",
-      "Science",
-      "Cell",
-      "NeurIPS",
-      "ICML",
-      "ICLR"
+    "named_evidence_filters": [
+      {
+        "name": "Nature",
+        "type": "journal",
+        "description": "Exact Nature journal evidence; keep separate from broader publisher families."
+      },
+      {
+        "name": "Science",
+        "type": "journal",
+        "description": "Exact Science journal evidence; keep separate from broader publisher families."
+      },
+      {
+        "name": "NeurIPS",
+        "type": "conference",
+        "description": "Named machine-learning conference evidence for method-focused rows."
+      },
+      {
+        "name": "Cell Systems",
+        "type": "journal",
+        "description": "Named computational-biology journal evidence."
+      },
+      {
+        "name": "Example Academy Fellowship",
+        "type": "honor",
+        "description": "Synthetic fellowship used to demonstrate medal or fellowship filters."
+      }
     ],
-    "related_venue_families": [
-      "Nature Portfolio",
-      "Cell Press",
-      "major machine learning conferences",
-      "computational biology journals and conferences"
-    ],
+    "target_venues": [],
+    "related_venue_families": [],
     "honor_sources": [
       "academy fellowships",
       "society fellows and awards",

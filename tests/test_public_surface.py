@@ -153,10 +153,11 @@ def test_guided_intake_requires_separate_evidence_questions() -> None:
 
     required_terms = [
         "ask these as separate questions",
-        "target journals/conferences",
-        "related journal/conference families",
+        "named evidence filters",
+        "concrete evidence items",
         "honor sources",
         "other constraints",
+        "age",
         "do not auto-fill",
         "google scholar",
     ]
@@ -170,8 +171,14 @@ def test_public_guidance_uses_clear_journal_conference_terms() -> None:
     banned_phrases = [
         "target venues",
         "target venue",
+        "target journals/conferences",
+        "target journal/conference",
+        "target journals",
+        "target journal",
         "related venue families",
         "related venue family",
+        "related journal/conference families",
+        "related journal/conference family",
         "publication venue",
         "publication venues",
         "venue evidence",

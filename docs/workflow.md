@@ -15,28 +15,29 @@ Start from `configs/domain.json` and define:
 - inclusion terms that make a person, group, or role relevant
 - review terms that require manual inspection
 - exclusion terms that indicate expired, off-topic, duplicate, or unverified records
-- target journals/conferences that matter for prioritization
-- related journal/conference families that should count as adjacent evidence
+- named evidence filters that matter for prioritization, using concrete journals, conferences,
+  medals, fellowships, academies, named programs, or short source-backed descriptions
 - honor sources such as awards, medals, fellowships, academies, invited/keynote lists, editorial
   boards, and committee lists
+- age policy, including whether public sourced age or transparent estimates should be collected
 - identity-link sources accepted for verification, including official profiles, Google Scholar
   author pages, ORCID, OpenAlex, and Semantic Scholar when available
 - open-ended additional constraints from the user
 - source passes to run
 
-These terms are project data. Do not bake them into code or schema names. Ask the user for target
-journals/conferences, related journal/conference families, honor sources, and other constraints as
-separate questions. Target journals/conferences are usually a short high-signal prioritization
-list, not a full field bibliography; if the agent proposes defaults, record them as provisional
-until the user confirms them.
+These terms are project data. Do not bake them into code or schema names. Ask the user for named
+evidence filters, honor sources, age policy, and other constraints as separate questions. Named
+evidence filters are usually a short high-signal prioritization list, not a full field
+bibliography; if the agent proposes defaults, record them as provisional until the user confirms
+them.
 
 ## 2. Plan Constraint-Driven Source Passes
 
 Convert constraints into source paths before collecting names. This prevents a workspace from
 collapsing into a small keyword-search shortlist.
 
-- Publication constraints: search target journals, target conferences, related journal families,
-  proceedings, special issues, editorial boards, and recurring authors.
+- Publication constraints: search the named journals, conferences, proceedings, special issues,
+  editorial boards, and recurring authors requested by the user.
 - Conference or prestige constraints: reverse-scan societies, awards, medals, invited talks,
   keynote lists, program committees, and academy or fellowship rosters.
 - Geography or institution constraints: use official department, institute, center, lab, and
@@ -98,7 +99,7 @@ Rows that are weak, adjacent, ambiguous, duplicated, stale, or off-topic belong 
 `tables/entities_review_or_excluded.csv`, not in an untracked scratch file.
 
 Missing enrichment is not evidence of absence. A blank journal/conference evidence, metric,
-representative work, or current-opening field means unknown or not collected unless a source
+representative work, age, or current-opening field means unknown or not collected unless a source
 explicitly proves the negative.
 
 ## 6. Merge Conservatively
@@ -113,7 +114,7 @@ merging duplicates:
 
 ## 7. Enrich With Current Evidence
 
-Current positions, deadlines, affiliations, metrics, and publication evidence are time-sensitive.
+Current positions, deadlines, affiliations, metrics, age, and publication evidence are time-sensitive.
 Refresh them from live sources and record `retrieved_at`, source URL, and metric source. If a value
 cannot be verified, leave it blank and explain why in `notes` or an audit file.
 

@@ -30,8 +30,8 @@
 
           <div class="filter-block">
             <div class="filter-block__title" data-i18n="filters.evidence">Evidence</div>
-            <button class="toggle" data-filter="targetJournalConference" data-i18n="filters.targetJournalConference">Target journal/conference</button>
-            <button class="toggle" data-filter="relatedJournalConference" data-i18n="filters.relatedJournalConference">Related journal/conference family</button>
+            <div class="facet-label" data-i18n="filters.evidenceItems">Evidence items</div>
+            <div id="evidenceFacetList" class="facet-list"></div>
             <button class="toggle" data-filter="honors" data-i18n="filters.honors">Honors / awards</button>
           </div>
 
@@ -46,6 +46,18 @@
               <input id="minCites" type="number" min="0" step="100" placeholder="0" />
             </label>
             <button class="toggle" data-filter="missingMetrics" data-i18n="filters.missingMetrics">Missing metric review</button>
+          </div>
+
+          <div class="filter-block">
+            <div class="filter-block__title" data-i18n="filters.age">Age</div>
+            <label class="field field--compact">
+              <span data-i18n="filters.minAge">Min age</span>
+              <input id="minAge" type="number" min="0" step="1" placeholder="0" />
+            </label>
+            <label class="field field--compact">
+              <span data-i18n="filters.maxAge">Max age</span>
+              <input id="maxAge" type="number" min="0" step="1" placeholder="99" />
+            </label>
           </div>
 
           <div class="filter-block">
@@ -66,7 +78,7 @@
               <option value="fit" data-i18n="sort.fit">Fit / evidence</option>
               <option value="h" data-i18n="sort.h">h-index</option>
               <option value="citations" data-i18n="sort.citations">Citations</option>
-              <option value="journalConference" data-i18n="sort.journalConference">Journal/conference evidence</option>
+              <option value="evidence" data-i18n="sort.evidence">Evidence items</option>
               <option value="country" data-i18n="sort.country">Country</option>
               <option value="status" data-i18n="sort.status">Private status</option>
               <option value="name" data-i18n="sort.name">Name</option>

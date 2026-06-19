@@ -32,16 +32,19 @@ coverage boundary.
 Before source expansion, confirm high-signal prioritization inputs with the user as separate
 questions:
 
-- exact target journals/conferences, usually a short list rather than a full field bibliography
-- related journal/conference families that count as adjacent evidence
+- named evidence filters, usually a short list rather than a full field bibliography. These should
+  be concrete evidence items such as exact journal names, conference names, medals, fellowships,
+  academies, named programs, or concise source-backed labels.
 - honor sources for reverse discovery, such as awards, medals, fellowships, academies, invited or
   keynote lists, editorial boards, and committees
+- age policy, including whether to collect public sourced age, transparent estimates, or no age
+  data
 - identity-link sources to collect, including Google Scholar author pages when the user cares about
   them
 - any other constraints or things to emphasize, avoid, or handle carefully
 
-Do not auto-fill broad target journal/conference or honor-source lists from field assumptions. If
-defaults are needed, propose a compact provisional list and record that it was not user-confirmed.
+Do not auto-fill broad evidence or honor-source lists from field assumptions. If defaults are
+needed, propose a compact provisional list and record that it was not user-confirmed.
 
 Keep source-batch accounting from the first pass. Every source family should have a batch name,
 row count, retrieval date, access method, and caveat in `audit/`. If a table is mostly seed data,
@@ -50,7 +53,7 @@ say so explicitly and continue expanding independent sources.
 Run independent source-family passes:
 
 - official department, institute, center, lab, and program directories
-- journal, related journal-family, proceedings, special-issue, and editorial-board passes
+- journal, conference, proceedings, special-issue, and editorial-board passes
 - conference, workshop, keynote, program-committee, and society passes
 - award, medal, fellowship, academy, and invited-lecture reverse-discovery passes
 - funder project databases, grant rosters, fellowship calls, and hiring pages
@@ -102,6 +105,8 @@ Useful worker validation rules:
 - scraped list names are normalized to person or group names only
 - original award, citation, role, or source-list text is preserved in evidence fields
 - unknown metrics or publication evidence remain blank with notes
+- public sourced or transparently estimated age is recorded with `age_as_of` and `age_evidence`;
+  unreliable age remains blank
 - ambiguous publication or identity matches are marked for manual review
 
 ## Identity And Metrics
@@ -132,8 +137,9 @@ Good publication passes produce:
 
 - raw paper rows
 - per-entity summaries
-- exact target journal/conference flags
-- related journal/conference family flags
+- concrete `evidence_items` labels such as exact journal names, conference names, or named article
+  evidence
+- `evidence_summary` text explaining why those labels were attached
 - a manual-check table for ambiguous matches
 - notes explaining API limits and false-positive patterns
 
@@ -167,7 +173,8 @@ Before calling a large pass ready, check:
 - blank required fields
 - duplicate normalized identities
 - enrichment coverage for identity links and evidence fields, especially requested fields such as
-  `scholar_url`, `homepage_url`, `honors`, and `target_publication_evidence`
+  `scholar_url`, `homepage_url`, `honors`, `evidence_items`, `evidence_summary`, `age`, and
+  `age_evidence`
 - unmatched private status rows
 - review/excluded counts
 - metric coverage and missing-metric exceptions

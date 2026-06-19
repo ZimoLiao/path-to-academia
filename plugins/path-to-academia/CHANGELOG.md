@@ -1,21 +1,32 @@
 # Changelog
 
+## 1.0.6 - 2026-06-19
+
+- Added `evidence_items` and `evidence_summary` as the preferred entity fields for concrete,
+  filterable evidence labels such as exact journals, conferences, medals, fellowships, academies,
+  invited lists, and named programs.
+- Added `birth_year`, `age`, `age_as_of`, and `age_evidence` to support public sourced or
+  transparently estimated PI age collection, with Web UI age-range filtering.
+- Replaced fixed Web UI publication-priority toggles with dynamic evidence-item facets.
+- Updated Guided Intake, workflow docs, quality gates, and default prompts so agents ask for named
+  evidence filters and age policy before collecting data.
+
 ## 1.0.5 - 2026-06-19
 
-- Replaced ambiguous publication-place wording with explicit journal/conference language across
+- Replaced ambiguous publication-place wording with explicit journal/conference wording across
   Guided Intake, docs, schema descriptions, default prompts, examples, and Web UI labels.
-- Kept released compatibility keys such as `target_venues` and `target_venue_exact`, but documented
-  them as target journal/conference lists and evidence fields.
+- Kept released compatibility keys such as `target_venues` and `target_venue_exact`, while
+  documenting them as compatibility fields.
 - Added regression tests so public guidance and UI labels do not drift back to unclear publication
   terminology.
 
 ## 1.0.4 - 2026-06-18
 
-- Split Guided Intake evidence setup into separate required questions for exact target
-  journals/conferences, related journal/conference families, honor sources, identity-link sources,
-  and open-ended additional constraints.
-- Clarified that target journals/conferences are user-owned high-signal prioritization anchors, not
-  an agent-generated full field bibliography.
+- Split Guided Intake evidence setup into separate required questions for exact publication
+  priorities, adjacent evidence groups, honor sources, identity-link sources, and open-ended
+  additional constraints.
+- Clarified that publication-priority lists are user-owned high-signal anchors, not an
+  agent-generated full field bibliography.
 - Added `related_venue_families`, `honor_sources`, and `constraints.additional_constraints` to
   workspace config and context output.
 - Added quality-report enrichment coverage for profile links, Google Scholar links, honors, and

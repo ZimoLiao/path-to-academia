@@ -1,6 +1,6 @@
 {
   "name": "path-to-academia",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Guided agent workspace for building auditable academic opportunity databases.",
   "author": {
     "name": "path to academia contributors",
@@ -9,7 +9,14 @@
   "homepage": "https://github.com/ZimoLiao/path-to-academia",
   "repository": "https://github.com/ZimoLiao/path-to-academia",
   "license": "MIT",
-  "keywords": ["academic", "postdoc", "research", "agent", "plugin", "workspace"],
+  "keywords": [
+    "academic",
+    "postdoc",
+    "research",
+    "agent",
+    "plugin",
+    "workspace"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "path to academia",
@@ -17,10 +24,13 @@
     "longDescription": "path to academia helps agents ask the right intake questions, configure a domain brief, collect source evidence, verify identity, deduplicate, audit, export, and browse academic people, groups, and position data while keeping private outreach state separate from facts.",
     "developerName": "path to academia contributors",
     "category": "Productivity",
-    "capabilities": ["Interactive", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
     "websiteURL": "https://github.com/ZimoLiao/path-to-academia",
     "defaultPrompt": [
-      "Run Guided Intake for a new academic opportunity workspace, asking separate questions for target journals/conferences, related journal/conference families, honor sources, Google Scholar links, and other constraints.",
+      "Run Guided Intake for a new academic opportunity workspace, asking separate questions for named evidence filters, honor sources, age policy, Google Scholar links, and other constraints.",
       "Initialize an ML and biology workspace after recording assumptions.",
       "Audit my path to academia workspace and export a wrapped XLSX."
     ],

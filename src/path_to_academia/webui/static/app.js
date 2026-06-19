@@ -1,4 +1,6 @@
 const STATUS_OPTIONS = ["none", "to_apply", "shortlist", "contacted", "waiting_reply", "follow-up", "applied", "rejected"];
+const LEGACY_EXACT_EVIDENCE_ITEM = "Exact configured evidence";
+const LEGACY_RELATED_EVIDENCE_ITEM = "Related configured evidence";
 
 const LANGUAGE_NAMES = {
   en: "English",
@@ -20,9 +22,9 @@ const state = {
   activeTag: "",
   language: "en",
   translations: {},
+  evidenceFacets: [],
   filters: {
-    targetJournalConference: false,
-    relatedJournalConference: false,
+    evidenceItems: new Set(),
     honors: false,
     missingMetrics: false,
     status: "",
@@ -45,6 +47,9 @@ function bindElements() {
     "searchInput",
     "minH",
     "minCites",
+    "minAge",
+    "maxAge",
+    "evidenceFacetList",
     "countrySelect",
     "sortSelect",
     "statusFilters",
@@ -92,6 +97,7 @@ function renderLanguageSelect() {
     document.documentElement.lang = state.language;
     applyStaticTranslations();
     renderStatusFilters();
+    renderEvidenceFilters();
     populateCountries();
     applyFilters();
   });
@@ -122,8 +128,19 @@ function initControls() {
       applyFilters();
     });
   });
+  els.evidenceFacetList.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-evidence-item]");
+    if (!button) return;
+    const item = button.dataset.evidenceItem;
+    if (state.filters.evidenceItems.has(item)) {
+      state.filters.evidenceItems.delete(item);
+    } else {
+      state.filters.evidenceItems.add(item);
+    }
+    applyFilters();
+  });
 
-  for (const control of [els.searchInput, els.minH, els.minCites, els.countrySelect, els.sortSelect]) {
+  for (const control of [els.searchInput, els.minH, els.minCites, els.minAge, els.maxAge, els.countrySelect, els.sortSelect]) {
     control.addEventListener("input", applyFilters);
     control.addEventListener("change", applyFilters);
   }
@@ -141,8 +158,10 @@ async function boot() {
 
     state.statuses = new Map((statuses.records || []).map((row) => [row.person_key, row]));
     state.records = (records.records || []).map(enrichRecord);
+    state.evidenceFacets = buildEvidenceFacets();
     state.selectedKey = state.records[0]?.person_key || "";
     populateCountries();
+    renderEvidenceFilters();
     applyFilters();
   } catch (error) {
     els.topStats.innerHTML = `<span class="stat-pill">${escapeHtml(t("message.error", { message: error.message }))}</span>`;
@@ -155,9 +174,12 @@ function enrichRecord(row) {
   const tags = splitTags(row.domain_tags);
   const hNum = numberValue(row.h_index);
   const citeNum = numberValue(row.citation_count);
+  const evidenceItems = parseEvidenceItems(row);
+  const ageNum = ageValue(row.age);
   return {
     ...row,
     tags,
+    evidenceItems,
     status: status.status || "none",
     priority: status.priority || "",
     last_contacted: status.last_contacted || "",
@@ -165,8 +187,9 @@ function enrichRecord(row) {
     private_note: status.private_note || "",
     hNum,
     citeNum,
-    hasTargetJournalConference: yesish(row.target_venue_exact),
-    hasRelatedJournalConference: yesish(row.target_venue_family),
+    ageNum,
+    hasExactConfiguredEvidence: yesish(row.target_venue_exact),
+    hasRelatedConfiguredEvidence: yesish(row.target_venue_family),
     hasHonors: Boolean(clean(row.honors)),
     missingMetrics: hNum === null || citeNum === null,
   };
@@ -182,7 +205,13 @@ function searchableText(row) {
     row.summary_text,
     row.domain_tags,
     row.honors,
+    row.evidence_items,
+    row.evidence_summary,
     row.target_publication_evidence,
+    row.birth_year,
+    row.age,
+    row.age_as_of,
+    row.age_evidence,
     row.relevance_reason,
     row.relevance_evidence,
     row.source_name,
@@ -222,8 +251,7 @@ function renderStatusFilters() {
 function clearFilters() {
   state.activeTag = "";
   state.filters = {
-    targetJournalConference: false,
-    relatedJournalConference: false,
+    evidenceItems: new Set(),
     honors: false,
     missingMetrics: false,
     status: "",
@@ -231,6 +259,8 @@ function clearFilters() {
   els.searchInput.value = "";
   els.minH.value = "";
   els.minCites.value = "";
+  els.minAge.value = "";
+  els.maxAge.value = "";
   els.countrySelect.value = "";
   els.sortSelect.value = "fit";
   document.querySelectorAll(".toggle[data-filter]").forEach((button) => button.classList.remove("is-active"));
@@ -239,30 +269,14 @@ function clearFilters() {
 }
 
 function applyFilters() {
-  const query = els.searchInput.value.trim().toLowerCase();
-  const minH = numberValue(els.minH.value);
-  const minCites = numberValue(els.minCites.value);
-  const country = els.countrySelect.value;
-
-  state.filtered = state.records.filter((row) => {
-    if (query && !searchableText(row).includes(query)) return false;
-    if (state.activeTag && !row.tags.includes(state.activeTag)) return false;
-    if (country && row.country !== country) return false;
-    if (state.filters.targetJournalConference && !row.hasTargetJournalConference) return false;
-    if (state.filters.relatedJournalConference && !row.hasRelatedJournalConference) return false;
-    if (state.filters.honors && !row.hasHonors) return false;
-    if (state.filters.missingMetrics && !row.missingMetrics) return false;
-    if (state.filters.status && row.status !== state.filters.status) return false;
-    if (minH !== null && (row.hNum === null || row.hNum < minH)) return false;
-    if (minCites !== null && (row.citeNum === null || row.citeNum < minCites)) return false;
-    return true;
-  });
+  const controls = readFilterControls();
+  state.filtered = state.records.filter((row) => rowMatchesControls(row, controls));
 
   sortRows();
   if (!state.filtered.some((row) => row.person_key === state.selectedKey)) {
     state.selectedKey = state.filtered[0]?.person_key || state.records[0]?.person_key || "";
   }
-  renderAll();
+  renderAll(controls);
 }
 
 function sortRows() {
@@ -270,7 +284,7 @@ function sortRows() {
   state.filtered.sort((a, b) => {
     if (sort === "h") return compareNum(b.hNum, a.hNum) || a.name.localeCompare(b.name);
     if (sort === "citations") return compareNum(b.citeNum, a.citeNum) || a.name.localeCompare(b.name);
-    if (sort === "journalConference") return journalConferenceScore(b) - journalConferenceScore(a) || compareNum(b.hNum, a.hNum) || a.name.localeCompare(b.name);
+    if (sort === "evidence") return evidenceScore(b) - evidenceScore(a) || compareNum(b.hNum, a.hNum) || a.name.localeCompare(b.name);
     if (sort === "country") return a.country.localeCompare(b.country) || a.name.localeCompare(b.name);
     if (sort === "status") return a.status.localeCompare(b.status) || a.name.localeCompare(b.name);
     if (sort === "name") return a.name.localeCompare(b.name);
@@ -278,31 +292,32 @@ function sortRows() {
   });
 }
 
-function renderAll() {
+function renderAll(controls = readFilterControls()) {
   renderTopStats();
-  renderTagTree();
+  updateEvidenceFilterState();
+  renderTagTree(controls);
   renderCards();
   renderDossier();
 }
 
 function renderTopStats() {
-  const exact = state.records.filter((row) => row.hasTargetJournalConference).length;
-  const family = state.records.filter((row) => row.hasRelatedJournalConference).length;
+  const evidenceTagged = state.records.filter((row) => row.evidenceItems.length).length;
+  const evidenceItems = new Set(state.records.flatMap((row) => row.evidenceItems)).size;
   const statusCount = [...state.statuses.values()].filter((row) => row.status && row.status !== "none").length;
   const countries = new Set(state.records.map((row) => row.country).filter(Boolean)).size;
   els.topStats.innerHTML = [
     t("top.records", { count: state.records.length }),
     t("top.shown", { count: state.filtered.length }),
     t("top.countries", { count: countries }),
-    t("top.targetJournalConference", { count: exact }),
-    t("top.relatedJournalConference", { count: family }),
+    t("top.evidenceTagged", { count: evidenceTagged }),
+    t("top.evidenceItems", { count: evidenceItems }),
     t("top.statusRows", { count: statusCount }),
   ]
     .map((text) => `<span class="stat-pill">${escapeHtml(text)}</span>`)
     .join("");
 }
 
-function renderTagTree() {
+function renderTagTree(controls) {
   const tags = [...new Set(state.records.flatMap((row) => row.tags))].sort((a, b) => tagCount(b) - tagCount(a) || a.localeCompare(b));
   if (!tags.length) {
     els.tagTree.innerHTML = `<div class="empty">${escapeHtml(t("empty.noTags"))}</div>`;
@@ -310,7 +325,7 @@ function renderTagTree() {
   }
   els.tagTree.innerHTML = tags
     .map((tag) => {
-      const count = state.records.filter((row) => tagMatchesCurrentFilters(row, tag)).length;
+      const count = state.records.filter((row) => tagMatchesCurrentFilters(row, tag, controls)).length;
       return `
         <button class="tag-node ${state.activeTag === tag ? "is-active" : ""}" data-tag="${escapeAttr(tag)}">
           <span>${escapeHtml(tag)}</span>
@@ -327,26 +342,74 @@ function renderTagTree() {
   });
 }
 
-function tagMatchesCurrentFilters(row, tag) {
+function renderEvidenceFilters() {
+  if (!els.evidenceFacetList) return;
+  if (!state.evidenceFacets.length) {
+    els.evidenceFacetList.innerHTML = `<div class="empty">${escapeHtml(t("empty.noEvidenceItems"))}</div>`;
+    return;
+  }
+  els.evidenceFacetList.innerHTML = state.evidenceFacets
+    .map(([item, count]) => `
+      <button class="facet-button" data-evidence-item="${escapeAttr(item)}">
+        <span>${escapeHtml(item)}</span>
+        <strong>${escapeHtml(formatNumber(count))}</strong>
+      </button>
+    `)
+    .join("");
+  updateEvidenceFilterState();
+}
+
+function buildEvidenceFacets() {
+  const counts = new Map();
+  for (const row of state.records) {
+    for (const item of row.evidenceItems) {
+      counts.set(item, (counts.get(item) || 0) + 1);
+    }
+  }
+  return [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+}
+
+function updateEvidenceFilterState() {
+  els.evidenceFacetList.querySelectorAll("[data-evidence-item]").forEach((button) => {
+    button.classList.toggle("is-active", state.filters.evidenceItems.has(button.dataset.evidenceItem));
+  });
+}
+
+function readFilterControls() {
+  return {
+    query: els.searchInput.value.trim().toLowerCase(),
+    minH: numberValue(els.minH.value),
+    minCites: numberValue(els.minCites.value),
+    minAge: numberValue(els.minAge.value),
+    maxAge: numberValue(els.maxAge.value),
+    country: els.countrySelect.value,
+    selectedEvidenceItems: state.filters.evidenceItems,
+  };
+}
+
+function rowMatchesControls(row, controls, options = {}) {
+  if (controls.query && !searchableText(row).includes(controls.query)) return false;
+  if (!options.ignoreTag && state.activeTag && !row.tags.includes(state.activeTag)) return false;
+  if (controls.country && row.country !== controls.country) return false;
+  if (!options.ignoreEvidence && !recordHasSelectedEvidence(row, controls)) return false;
+  if (state.filters.honors && !row.hasHonors) return false;
+  if (state.filters.missingMetrics && !row.missingMetrics) return false;
+  if (state.filters.status && row.status !== state.filters.status) return false;
+  if (controls.minH !== null && (row.hNum === null || row.hNum < controls.minH)) return false;
+  if (controls.minCites !== null && (row.citeNum === null || row.citeNum < controls.minCites)) return false;
+  if (controls.minAge !== null && (row.ageNum === null || row.ageNum < controls.minAge)) return false;
+  if (controls.maxAge !== null && (row.ageNum === null || row.ageNum > controls.maxAge)) return false;
+  return true;
+}
+
+function recordHasSelectedEvidence(row, controls) {
+  if (!controls.selectedEvidenceItems.size) return true;
+  return row.evidenceItems.some((item) => controls.selectedEvidenceItems.has(item));
+}
+
+function tagMatchesCurrentFilters(row, tag, controls) {
   if (!row.tags.includes(tag)) return false;
-  const activeTag = state.activeTag;
-  state.activeTag = "";
-  const query = els.searchInput.value.trim().toLowerCase();
-  const minH = numberValue(els.minH.value);
-  const minCites = numberValue(els.minCites.value);
-  const country = els.countrySelect.value;
-  const ok =
-    (!query || searchableText(row).includes(query)) &&
-    (!country || row.country === country) &&
-    (!state.filters.targetJournalConference || row.hasTargetJournalConference) &&
-    (!state.filters.relatedJournalConference || row.hasRelatedJournalConference) &&
-    (!state.filters.honors || row.hasHonors) &&
-    (!state.filters.missingMetrics || row.missingMetrics) &&
-    (!state.filters.status || row.status === state.filters.status) &&
-    (minH === null || (row.hNum !== null && row.hNum >= minH)) &&
-    (minCites === null || (row.citeNum !== null && row.citeNum >= minCites));
-  state.activeTag = activeTag;
-  return ok;
+  return rowMatchesControls(row, controls, { ignoreTag: true });
 }
 
 function renderCards() {
@@ -377,11 +440,8 @@ function renderCards() {
 }
 
 function renderCard(row) {
-  const badges = [
-    row.hasTargetJournalConference ? evidenceBadge(row, "targetPublication", t("badge.targetJournalConference")) : "",
-    row.hasRelatedJournalConference ? evidenceBadge(row, "targetPublication", t("badge.relatedJournalConference")) : "",
-    row.hasHonors ? evidenceBadge(row, "honors", t("badge.honors")) : "",
-  ].join("");
+  const evidenceBadges = row.evidenceItems.slice(0, 3).map((item) => evidenceBadge(row, "evidence", item)).join("");
+  const badges = [evidenceBadges, row.hasHonors ? evidenceBadge(row, "honors", t("badge.honors")) : ""].join("");
   return `
     <article class="card ${row.person_key === state.selectedKey ? "is-selected" : ""}" data-key="${escapeAttr(row.person_key)}">
       <div class="card__head">
@@ -394,6 +454,7 @@ function renderCard(row) {
       <div class="metrics-line">
         <span>${escapeHtml(t("metric.h"))} ${escapeHtml(row.h_index || "NA")}</span>
         <span>${escapeHtml(t("metric.citations"))} ${escapeHtml(formatNumber(row.citation_count) || "NA")}</span>
+        ${row.age ? `<span>${escapeHtml(t("metrics.age"))} ${escapeHtml(row.age)}</span>` : ""}
       </div>
       ${renderCardActions(row)}
     </article>
@@ -411,7 +472,7 @@ function renderDossier() {
     <h2>${escapeHtml(row.name)}</h2>
     <div class="meta">${escapeHtml(row.role_title || t("entity.researcher"))} · ${escapeHtml(row.institution)} · ${escapeHtml(row.country)}</div>
     ${linkRow(row)}
-    <div class="tag-row">${row.tags.map(tagPill).join("")}${row.hasTargetJournalConference ? `<span class="badge">${escapeHtml(t("badge.targetJournalConference"))}</span>` : ""}${row.hasRelatedJournalConference ? `<span class="badge">${escapeHtml(t("badge.relatedJournalConference"))}</span>` : ""}</div>
+    <div class="tag-row">${row.tags.map(tagPill).join("")}${row.evidenceItems.slice(0, 5).map((item) => `<span class="badge">${escapeHtml(item)}</span>`).join("")}</div>
 
     <section class="dossier-section">
       <div class="dossier-section__title">${escapeHtml(t("dossier.privateStatus"))}</div>
@@ -421,9 +482,10 @@ function renderDossier() {
     ${section(t("dossier.group"), row.department_or_group, "group")}
     ${section(t("dossier.summary"), row.summary_text, "summary")}
     ${section(t("dossier.relevanceEvidence"), row.relevance_evidence || row.relevance_reason, "relevanceEvidence")}
+    ${section(t("dossier.evidenceSummary"), row.evidence_summary || row.target_publication_evidence, "evidence")}
     ${section(t("dossier.honors"), row.honors, "honors")}
     ${section(t("dossier.metrics"), metricsText(row), "metrics")}
-    ${section(t("dossier.targetPublication"), row.target_publication_evidence, "targetPublication")}
+    ${section(t("dossier.ageEvidence"), row.age_evidence, "ageEvidence")}
     ${section(t("dossier.notes"), row.notes, "notes")}
     ${sourceSection(row)}
   `;
@@ -553,7 +615,9 @@ function renderLinks(links) {
 }
 
 function evidenceBadge(row, sectionName, label) {
-  const preview = sectionName === "honors" ? row.honors : row.target_publication_evidence;
+  const preview = sectionName === "honors"
+    ? row.honors
+    : [row.evidence_summary, row.target_publication_evidence, row.evidence_items].find(clean);
   const title = clean(preview) || label;
   return `<button type="button" class="badge badge-button" data-key="${escapeAttr(row.person_key)}" data-evidence-section="${escapeAttr(sectionName)}" title="${escapeAttr(title)}" aria-label="${escapeAttr(`${label}: ${row.name}`)}">${escapeHtml(label)}</button>`;
 }
@@ -636,6 +700,8 @@ function metricsText(row) {
   return [
     `${t("metrics.hIndex")}: ${row.h_index || t("metrics.missing")}`,
     `${t("metrics.citationCount")}: ${formatNumber(row.citation_count) || t("metrics.missing")}`,
+    row.age ? `${t("metrics.age")}: ${row.age}${row.age_as_of ? ` (${t("metrics.asOf")} ${row.age_as_of})` : ""}` : "",
+    row.birth_year ? `${t("metrics.birthYear")}: ${row.birth_year}` : "",
     row.metric_source ? `${t("metrics.metricSource")}: ${row.metric_source}` : "",
   ]
     .filter(Boolean)
@@ -649,7 +715,7 @@ function dossierSectionId(sectionName) {
 function fitScore(row) {
   let score = 0;
   score += row.tags.length * 4;
-  score += journalConferenceScore(row) * 12;
+  score += evidenceScore(row) * 6;
   if (row.hasHonors) score += 8;
   if (row.status === "shortlist") score += 10;
   if (row.status === "rejected") score -= 30;
@@ -657,8 +723,12 @@ function fitScore(row) {
   return score;
 }
 
-function journalConferenceScore(row) {
-  return (row.hasTargetJournalConference ? 2 : 0) + (row.hasRelatedJournalConference ? 1 : 0);
+function evidenceScore(row) {
+  let score = row.evidenceItems.length;
+  if (row.hasExactConfiguredEvidence) score += 2;
+  if (row.hasRelatedConfiguredEvidence) score += 1;
+  if (row.hasHonors) score += 1;
+  return score;
 }
 
 function tagCount(tag) {
@@ -683,6 +753,31 @@ function splitList(value) {
     .filter(Boolean);
 }
 
+function parseEvidenceItems(row) {
+  const explicit = splitList(row.evidence_items);
+  const compatibilityEvidence = explicit.length ? [] : legacyEvidenceItems(row);
+  const fallbackHonors = explicit.length ? [] : splitList(row.honors);
+  return dedupeStrings([...explicit, ...compatibilityEvidence, ...fallbackHonors]);
+}
+
+function legacyEvidenceItems(row) {
+  const labels = [];
+  if (yesish(row.target_venue_exact)) labels.push(LEGACY_EXACT_EVIDENCE_ITEM);
+  if (yesish(row.target_venue_family)) labels.push(LEGACY_RELATED_EVIDENCE_ITEM);
+  return labels;
+}
+
+function dedupeStrings(values) {
+  const seen = new Set();
+  return values.filter((value) => {
+    const key = clean(value);
+    const folded = key.toLowerCase();
+    if (!key || seen.has(folded)) return false;
+    seen.add(folded);
+    return true;
+  });
+}
+
 function yesish(value) {
   return ["yes", "true", "1", "y"].includes(String(value || "").trim().toLowerCase());
 }
@@ -697,6 +792,13 @@ function compareNum(a, b) {
 function numberValue(value) {
   const match = String(value || "").replaceAll(",", "").match(/\d+(?:\.\d+)?/);
   return match ? Number(match[0]) : null;
+}
+
+function ageValue(value) {
+  const text = String(value || "").trim();
+  if (!/^\d{1,3}$/.test(text)) return null;
+  const parsed = Number(text);
+  return parsed >= 18 && parsed <= 100 ? parsed : null;
 }
 
 function formatNumber(value) {

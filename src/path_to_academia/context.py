@@ -17,6 +17,17 @@ def list_values(value: object) -> list[object]:
     return value if isinstance(value, list) else []
 
 
+def named_filter_names(filters: list[object]) -> list[str]:
+    names: list[str] = []
+    for item in filters:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name")
+        if isinstance(name, str) and name.strip():
+            names.append(name)
+    return names
+
+
 def build_workspace_context(workspace: Path) -> dict[str, object]:
     workspace = workspace.resolve()
     config = read_domain_config(workspace)
@@ -24,6 +35,10 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
     domain = config.get("domain", {}) if isinstance(config.get("domain", {}), dict) else {}
     constraints = config.get("constraints", {}) if isinstance(config.get("constraints", {}), dict) else {}
     evidence = config.get("evidence", {}) if isinstance(config.get("evidence", {}), dict) else {}
+    named_filters = list_values(evidence.get("named_evidence_filters", []))
+    named_filter_name_list = named_filter_names(named_filters)
+    legacy_exact = list_values(evidence.get("target_venues", []))
+    legacy_related = list_values(evidence.get("related_venue_families", []))
     source_passes = list_values(config.get("source_passes", []))
 
     return {
@@ -40,19 +55,30 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
         "constraints": {
             "opportunity_types": list_values(constraints.get("opportunity_types", [])),
             "geographic_scope": list_values(constraints.get("geographic_scope", [])),
+            "age_policy": constraints.get("age_policy", ""),
             "additional_constraints": list_values(constraints.get("additional_constraints", [])),
         },
         "evidence": {
-            "target_venues": list_values(evidence.get("target_venues", [])),
-            "related_venue_families": list_values(evidence.get("related_venue_families", [])),
+            "named_evidence_filters": named_filters,
+            "named_evidence_filter_names": named_filter_name_list,
+            "target_venues": legacy_exact,
+            "related_venue_families": legacy_related,
             "honor_sources": list_values(evidence.get("honor_sources", [])),
             "identity_sources": list_values(evidence.get("identity_sources", [])),
+            "legacy_exact_evidence_names": legacy_exact,
+            "legacy_related_evidence_groups": legacy_related,
         },
         "terminology": {
-            "target_venues": "target journals/conferences",
-            "related_venue_families": "related journal/conference families",
-            "target_venue_exact": "target journal/conference evidence flag",
-            "target_venue_family": "related journal/conference family evidence flag",
+            "named_evidence_filters": "user-owned concrete evidence labels",
+            "named_evidence_filter_names": "configured concrete evidence labels by name",
+            "target_venues": "legacy exact evidence names",
+            "related_venue_families": "legacy related evidence groups",
+            "evidence_items": "concrete filterable evidence labels found for an entity",
+            "evidence_summary": "short explanation of matched evidence labels",
+            "target_venue_exact": "legacy exact configured evidence flag",
+            "target_venue_family": "legacy related configured evidence flag",
+            "age": "publicly sourced or transparent estimated age",
+            "age_evidence": "source or caveat for age collection",
         },
         "source_passes": source_passes,
         "quality": build_quality_report(workspace),
@@ -75,7 +101,8 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
             "Run path-to-academia qa after table edits.",
             "Preserve source URLs and audit notes for manual judgments.",
             "Treat blank enrichment as unknown or not collected, not negative evidence.",
-            "Keep target journals/conferences, related journal/conference families, honor sources, and other constraints user-owned; ask before auto-filling broad lists.",
+            "Keep named evidence filters, honor sources, age policy, and other constraints user-owned; ask before auto-filling broad lists.",
             "Collect Google Scholar author-page links when available, or audit why they were not collected.",
+            "Collect age only from public sourced facts or transparent estimates, and leave it blank when unreliable.",
         ],
     }

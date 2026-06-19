@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Plugin marketplace for path to academia.",
-    "version": "1.0.5"
+    "version": "1.0.6"
   },
   "plugins": [
     {
@@ -17,7 +17,14 @@
         "url": "https://github.com/ZimoLiao"
       },
       "homepage": "https://github.com/ZimoLiao/path-to-academia",
-      "tags": ["academic", "postdoc", "research", "agent", "plugin", "workspace"],
+      "tags": [
+        "academic",
+        "postdoc",
+        "research",
+        "agent",
+        "plugin",
+        "workspace"
+      ],
       "source": "./plugins/path-to-academia"
     }
   ]

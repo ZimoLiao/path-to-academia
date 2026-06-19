@@ -13,7 +13,7 @@ Excel exports, and a local browsing UI.
 
 Use it for academic people or position discovery across any domain. Do not hardcode a discipline
 into schemas, filenames, or public documentation. Put domain-specific inclusion terms,
-journal/conference lists, and source passes in `configs/domain.json`.
+named evidence filters, and source passes in `configs/domain.json`.
 
 ## Guided Intake First
 
@@ -28,14 +28,13 @@ Minimum intake:
 3. constraints: geography, institution types, career stage, funding, visa, deadlines, language, and
    must-include or must-exclude rules.
 4. geographic scope: countries, regions, institutions, and source languages to include or avoid.
-5. target journals/conferences: a short user-owned list of high-signal journals, conferences, publishers, or
-   programs used for prioritization. Ask whether this should be narrow, such as only top general
-   journals/conferences, or broader domain publication sources. Do not auto-fill a long field
-   bibliography.
-6. related journal/conference families: adjacent journal families, society meetings, special
-   issues, or proceedings that should count as related evidence, separate from exact targets.
-7. honor sources: awards, medals, fellowships, academies, invited talks, keynote lists, editorial
+5. named evidence filters: a short user-owned list of concrete evidence items for filtering and
+   prioritization. Use exact journal names, conference names, medal names, fellowship names,
+   academy names, named programs, or concise source-backed labels with a brief description.
+6. honor sources: awards, medals, fellowships, academies, invited talks, keynote lists, editorial
    boards, or committee lists worth reverse-scanning.
+7. age policy: whether PI age should be collected, which public sources or transparent estimates
+   are acceptable, and whether unreliable age should remain blank.
 8. identity and metric sources: official profiles, Google Scholar author pages, ORCID, OpenAlex,
    Semantic Scholar, metrics, publication evidence, and freshness requirements.
 9. other constraints: ask an open-ended question for anything else the user wants emphasized,
@@ -45,11 +44,10 @@ Minimum intake:
 11. output format: CSV, wrapped XLSX, local UI, audit report, private outreach state, or a publishable
    repository.
 
-Ask these as separate questions. Do not auto-fill target journals/conferences, related
-journal/conference families, or honor
-sources from your own field assumptions without showing the proposed list and getting the user's
-confirmation. If the user is unsure, offer a compact starter list and mark it as provisional in
-`audit/`.
+Ask these as separate questions. Do not auto-fill named evidence filters, honor sources, age
+policy, or other constraints from your own field assumptions without showing the proposed list and
+getting the user's confirmation. If the user is unsure, offer a compact starter list and mark it as
+provisional in `audit/`.
 
 After intake, write the assumptions into `configs/domain.json` and keep unclear or disputed rules in
 `audit/` so future agents can inspect the decision trail.
@@ -65,9 +63,9 @@ can practically support, bounded by available tooling, source rate limits, and t
 mergeable outputs.
 
 If subagents are available, assign each worker a distinct source pass, direction shard, geography,
-journal/conference or award pass, open-position board, or enrichment task. The main agent owns coordination,
-deduplication, QA, final exports, and user-facing synthesis. If subagents are unavailable, execute
-the same shard plan sequentially and note that limitation in `audit/`.
+journal/conference pass, award pass, open-position board, or enrichment task. The main agent owns
+coordination, deduplication, QA, final exports, and user-facing synthesis. If subagents are
+unavailable, execute the same shard plan sequentially and note that limitation in `audit/`.
 
 Load `../../docs/sharding.md` before dispatching workers. Every shard must return source rows,
 candidate rows, review/excluded rows, retrieval dates, source URLs, identity evidence, unresolved
@@ -97,9 +95,9 @@ Use later passes for deduplication, ranking, and polish after the raw rows are s
 Turn each user constraint into at least one source path before keyword searching. Record the planned
 paths in `configs/domain.json` and audit what each path did or did not cover.
 
-- If the user has journal or conference constraints, search journal archives, conference programs,
-  journal families, proceedings, special issues, editorial boards, and recurring corresponding
-  authors; then verify people through official profiles or persistent scholarly IDs.
+- If the user has journal or conference constraints, search the named journals, conference
+  programs, proceedings, special issues, editorial boards, and recurring corresponding authors;
+  then verify people through official profiles or persistent scholarly IDs.
 - If the user names conferences, workshops, societies, awards, medals, keynotes, or program
   committees, run reverse-discovery passes from those lists to people, groups, and institutions.
 - If the user has geography or institution constraints, start from official department, institute,
@@ -112,6 +110,19 @@ paths in `configs/domain.json` and audit what each path did or did not cover.
 Do not treat a seed roster, one spreadsheet, one search query, or one database as a coverage
 guarantee. Collect broadly first, keep weak or adjacent records in review, and rank only after the
 source coverage and identity evidence are auditable.
+
+## Evidence And Age Fields
+
+When a journal, conference, medal, fellowship, academy, invited list, or named program is used as a
+screening criterion, write the actual name into `evidence_items` for each matching entity. Add a
+brief `evidence_summary` explaining the match. Do not replace concrete evidence with vague labels.
+Leave `evidence_items` blank when the evidence was not collected; a blank value is unknown, not a
+negative signal.
+
+Collect PI age only when the workspace policy asks for it and the source is public or the estimate
+is transparent. Use `birth_year`, `age`, `age_as_of`, and `age_evidence`. Record the source or
+estimation basis in `age_evidence`; leave age blank when it is unreliable. Age is a workflow filter,
+not a quality judgment.
 
 ## Quick Start
 
@@ -159,8 +170,8 @@ boundary before changing tables.
 
 ## Workspace Contract
 
-- `configs/domain.json`: project-specific terms, journal/conference lists, source-pass plan, identity sources, and
-  sentinel checks.
+- `configs/domain.json`: project-specific terms, named evidence filters, source-pass plan, identity
+  sources, and sentinel checks.
 - `raw/source_records.csv`: extracted source evidence and intermediate records.
 - `raw/shards/`: optional per-subagent or per-source-batch raw rows before merge.
 - `tables/entities_final.csv`: canonical public fact table for people/groups.

@@ -210,6 +210,40 @@ textarea {
   text-align: center;
 }
 
+.facet-list {
+  display: grid;
+  gap: 6px;
+  max-height: 220px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.facet-label {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.facet-button {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  text-align: left;
+}
+
+.facet-button span {
+  overflow-wrap: anywhere;
+}
+
+.facet-button:hover,
+.facet-button:focus-visible,
+.facet-button.is-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
 .tag-tree {
   display: grid;
   gap: 7px;

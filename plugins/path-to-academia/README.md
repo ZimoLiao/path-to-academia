@@ -18,9 +18,8 @@ The bundle contains:
 
 After installation, invoke the skill as `path-to-academia` in Codex or as
 `/path-to-academia:path-to-academia` in Claude Code. The skill starts with Guided Intake: it asks
-for the research direction, opportunity type, constraints, geographic scope, target
-journals/conferences, related journal/conference families, honor sources, identity-link sources such
-as Google Scholar, other
+for the research direction, opportunity type, constraints, geographic scope, named evidence
+filters, honor sources, age policy, identity-link sources such as Google Scholar, other
 constraints, sentinel checks, and desired outputs before collecting sources.
 
 The Python CLI can also be used directly from this bundle:
@@ -30,12 +29,16 @@ python3 -m pip install -e .
 path-to-academia init ./workspace --example ml-bio
 path-to-academia context ./workspace
 path-to-academia qa ./workspace
+path-to-academia export-xlsx ./workspace/tables/entities_final.csv ./workspace/tables/entities_final_wrapped.xlsx
 path-to-academia serve ./workspace --port 8765
 ```
 
 Core documentation:
 
-- [Workflow](docs/workflow.md)
-- [Schema](docs/schema.md)
-- [Quality gates](docs/quality-gates.md)
-- [Privacy](docs/privacy.md)
+- `skills/path-to-academia/SKILL.md`
+- `docs/workflow.md`
+- `docs/collection-playbook.md`
+- `docs/schema.md`
+- `docs/quality-gates.md`
+- `docs/sharding.md`
+- `docs/privacy.md`

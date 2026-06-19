@@ -7,7 +7,7 @@ without mixing private outreach notes into public facts.
 
 The default example is intentionally generic: machine learning and biology. The workflow is
 configured through `configs/domain.json`, so a new project can define its own inclusion terms,
-journal/conference lists, source passes, and evidence rules without changing the schema.
+named evidence filters, source passes, and evidence rules without changing the schema.
 
 ## Guided Intake For Agents
 
@@ -22,12 +22,13 @@ Ask for:
 - constraints: career stage, institution type, seniority, funding, visa, remote/on-site, deadlines,
   language, or collaboration requirements.
 - geographic scope: countries, regions, institutions, and explicit exclusions.
-- target journals/conferences: a short user-owned list of high-signal journals, conferences, publishers, or
-  programs used for prioritization. Do not auto-fill a long field bibliography.
-- related journal/conference families: adjacent journal families, society meetings, special issues, or
-  proceedings that count as related evidence but are not exact targets.
+- named evidence filters: a short user-owned list of concrete evidence items used for filtering and
+  prioritization. Use the actual journal name, conference name, medal name, fellowship name, academy
+  name, named program, or a similarly precise label with a brief description.
 - honor sources: awards, medals, fellowships, academies, invited/keynote lists, editorial boards, or
   committee lists worth reverse-scanning.
+- age policy: whether PI age should be collected, which public sources or transparent estimates are
+  acceptable, and whether unreliable age should stay blank.
 - identity links and metrics: official profile types, Google Scholar author pages, ORCID, OpenAlex,
   Semantic Scholar, publication evidence, citation metrics, and recency requirements.
 - other constraints: an open-ended prompt for anything else the user wants emphasized, avoided, or
@@ -220,7 +221,7 @@ python3 -m py_compile $(find src scripts -name '*.py')
 
 ## Version
 
-Current release: `1.0.5`.
+Current release: `1.0.6`.
 
 ## License
 

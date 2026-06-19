@@ -43,7 +43,11 @@ def build_quality_report(workspace: Path) -> dict[str, object]:
         "openalex_url",
         "semantic_scholar_url",
         "honors",
+        "evidence_items",
+        "evidence_summary",
         "target_publication_evidence",
+        "age",
+        "age_evidence",
     ]
     enrichment_coverage = {
         field: sum(1 for row in rows if row.get(field, "").strip()) for field in enrichment_fields

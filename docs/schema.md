@@ -15,18 +15,21 @@ Purpose: project-specific rules that should not become hardcoded schema fields.
 Important keys:
 
 - `domain`: inclusion, review, and exclusion terms.
-- `constraints`: opportunity types, geography, and open-ended additional constraints.
-- `evidence`: target journals/conferences, related journal/conference families, honor sources, and accepted identity sources.
+- `constraints`: opportunity types, geography, age policy, and open-ended additional constraints.
+- `evidence`: named evidence filters, honor sources, and accepted identity sources.
 - `source_passes`: planned source-family passes with stable batch names.
 - `sentinel_checks`: user-provided coverage probes such as must-include people, groups, roles,
   journals, conferences, institutions, or source families. Each sentinel must appear in outputs or
   receive an explicit audit explanation.
 
-Keep the `target_venues` config key user-owned and usually short. It means target
-journals/conferences used as high-signal prioritization anchors, not a full bibliography for the
-field. Put adjacent or broader journal/conference families in `related_venue_families`, and put
-award, medal, fellowship, academy, invited/keynote, editorial-board, and committee sources in
-`honor_sources`.
+Keep `named_evidence_filters` user-owned and usually short. Each entry should be a concrete label:
+an exact journal, conference, medal, fellowship, academy, invited/keynote list, named program, or
+other source-backed filter with a brief description. Do not store vague labels when the actual
+evidence name is known.
+
+Older workspaces may still contain compatibility keys such as `target_venues` or
+`related_venue_families`. New work should translate those concepts into concrete
+`named_evidence_filters` and entity-level `evidence_items`.
 
 ## Raw Source Records
 
@@ -68,11 +71,15 @@ Required fields:
 Evidence fields:
 
 - `domain_tags`: semicolon-separated project tags used by the UI tag tree.
-- `target_venue_exact`: `yes` when there is verified evidence in the configured target journal/conference list.
-- `target_venue_family`: `yes` when there is verified evidence in the configured related journal/conference family list.
-- `target_publication_evidence`: concise text naming or summarizing the verified journal/conference evidence.
+- `evidence_items`: concrete semicolon-separated labels found for the row, such as `Nature`,
+  `NeurIPS`, `AGU Fellow`, or a named medal.
+- `evidence_summary`: concise explanation of those labels and why they matter.
 - `honors`: awards or recognition relevant to prioritization.
 - `metric_source`: source and retrieval context for metrics.
+- `birth_year`, `age`, `age_as_of`, `age_evidence`: public sourced or transparently estimated age
+  data. Leave age blank when the evidence is unreliable.
+- `target_venue_exact`, `target_venue_family`, `target_publication_evidence`: legacy compatibility
+  fields. Prefer `evidence_items` and `evidence_summary` for new projects.
 
 Identity-link fields:
 

@@ -1,6 +1,6 @@
 {
   "name": "path-to-academia",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Guided agent workspace for building auditable academic opportunity databases.",
   "author": {
     "name": "path to academia contributors",
@@ -9,6 +9,13 @@
   "homepage": "https://github.com/ZimoLiao/path-to-academia",
   "repository": "https://github.com/ZimoLiao/path-to-academia",
   "license": "MIT",
-  "keywords": ["academic", "postdoc", "research", "agent", "plugin", "workspace"],
+  "keywords": [
+    "academic",
+    "postdoc",
+    "research",
+    "agent",
+    "plugin",
+    "workspace"
+  ],
   "skills": "./skills/"
 }
