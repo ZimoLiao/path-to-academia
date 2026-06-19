@@ -1,7 +1,7 @@
 {
   "name": "path-to-academia",
   "version": "1.0.6",
-  "description": "Guided agent workspace for building auditable academic opportunity databases.",
+  "description": "Agent plugin for finding PhD and postdoc supervisors, labs, and open academic positions.",
   "author": {
     "name": "path to academia contributors",
     "url": "https://github.com/ZimoLiao"

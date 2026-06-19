@@ -31,14 +31,10 @@ def test_cli_initializes_checks_and_exports_workspace(tmp_path: Path, capsys) ->
         "Cell Systems",
         "Example Academy Fellowship",
     ]
-    assert context_output["evidence"]["target_venues"] == []
-    assert context_output["evidence"]["related_venue_families"] == []
     assert context_output["evidence"]["honor_sources"]
     assert "Google Scholar author page" in context_output["evidence"]["identity_sources"]
     assert context_output["terminology"]["named_evidence_filters"] == "user-owned concrete evidence labels"
     assert context_output["terminology"]["named_evidence_filter_names"] == "configured concrete evidence labels by name"
-    assert context_output["terminology"]["target_venues"] == "legacy exact evidence names"
-    assert context_output["terminology"]["target_venue_exact"] == "legacy exact configured evidence flag"
     assert context_output["terminology"]["evidence_items"] == "concrete filterable evidence labels found for an entity"
     assert context_output["terminology"]["age"] == "publicly sourced or transparent estimated age"
     assert "additional_constraints" in context_output["constraints"]

@@ -95,8 +95,6 @@ def test_context_preserves_legacy_evidence_config_keys(tmp_path: Path) -> None:
 
     context = build_workspace_context(workspace)
 
-    assert context["evidence"]["target_venues"] == ["Nature", "Science"]
-    assert context["evidence"]["related_venue_families"] == ["Nature Portfolio"]
     assert context["evidence"]["legacy_exact_evidence_names"] == ["Nature", "Science"]
     assert context["evidence"]["legacy_related_evidence_groups"] == ["Nature Portfolio"]
 
@@ -186,6 +184,7 @@ def test_quality_checks_find_blank_fields_and_duplicates(tmp_path: Path) -> None
     assert report["enrichment_coverage"]["honors"] == 3
     assert report["enrichment_coverage"]["evidence_items"] == 4
     assert report["enrichment_coverage"]["evidence_summary"] == 4
+    assert "target_publication_evidence" not in report["enrichment_coverage"]
     assert report["enrichment_coverage"]["age"] == 4
     assert report["enrichment_coverage"]["age_evidence"] == 4
     assert report["unmatched_status_count"] == 0

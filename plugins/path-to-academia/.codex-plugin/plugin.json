@@ -1,7 +1,7 @@
 {
   "name": "path-to-academia",
   "version": "1.0.6",
-  "description": "Guided agent workspace for building auditable academic opportunity databases.",
+  "description": "Agent plugin for finding PhD and postdoc supervisors, labs, and open academic positions.",
   "author": {
     "name": "path to academia contributors",
     "url": "https://github.com/ZimoLiao"
@@ -20,8 +20,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "path to academia",
-    "shortDescription": "Guide agents from intake to audited academic opportunity databases.",
-    "longDescription": "path to academia helps agents ask the right intake questions, configure a domain brief, collect source evidence, verify identity, deduplicate, audit, export, and browse academic people, groups, and position data while keeping private outreach state separate from facts.",
+    "shortDescription": "Help agents find academic supervisors, labs, and open positions.",
+    "longDescription": "path to academia helps agents ask intake questions, configure the search brief, collect current source evidence, verify identities, save auditable candidate tables, export CSV/XLSX files, and open a local Web UI for PhD/postdoc supervisor, lab, and position searches.",
     "developerName": "path to academia contributors",
     "category": "Productivity",
     "capabilities": [
@@ -30,8 +30,8 @@
     ],
     "websiteURL": "https://github.com/ZimoLiao/path-to-academia",
     "defaultPrompt": [
-      "Run Guided Intake for a new academic opportunity workspace, asking separate questions for named evidence filters, honor sources, age policy, Google Scholar links, and other constraints.",
-      "Initialize an ML and biology workspace after recording assumptions.",
+      "Use path-to-academia to find PhD or postdoc supervisors; ask intake questions before collecting sources.",
+      "Use path-to-academia to create a biology demo workspace and open the Web UI.",
       "Audit my path to academia workspace and export a wrapped XLSX."
     ],
     "brandColor": "#256C62"

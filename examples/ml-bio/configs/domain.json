@@ -65,8 +65,6 @@
         "description": "Synthetic fellowship used to demonstrate medal or fellowship filters."
       }
     ],
-    "target_venues": [],
-    "related_venue_families": [],
     "honor_sources": [
       "academy fellowships",
       "society fellows and awards",

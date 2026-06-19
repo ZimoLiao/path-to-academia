@@ -99,8 +99,8 @@ Rows that are weak, adjacent, ambiguous, duplicated, stale, or off-topic belong 
 `tables/entities_review_or_excluded.csv`, not in an untracked scratch file.
 
 Missing enrichment is not evidence of absence. A blank journal/conference evidence, metric,
-representative work, age, or current-opening field means unknown or not collected unless a source
-explicitly proves the negative.
+publication-evidence summary, age, or current-opening field means unknown or not collected unless a
+source explicitly proves the negative.
 
 ## 6. Merge Conservatively
 

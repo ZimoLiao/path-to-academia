@@ -35,13 +35,13 @@ ecosystem repositories. It is not a feature parity target; it is a release-readi
 | Citation metadata | Machine-readable citation for academic users | Added as `CITATION.cff` |
 | Agent context | Standard way for a fresh coding agent to load workspace state | Added as `path-to-academia context` |
 
-The agent-native scorecard is maintained separately in [agent-native-audit.md](agent-native-audit.md).
+The agent workflow scorecard is maintained separately in [agent-native-audit.md](agent-native-audit.md).
 
 ## Intentional Non-Goals For 1.x
 
 - Hosted documentation site.
 - Signed release artifacts or SBOM generation.
-- Screenshot or video demo assets.
+- Hosted demo site or video walkthrough.
 - Multi-agent runtime service or hosted database.
 - Hardcoded discipline-specific rankings.
 

@@ -40,6 +40,16 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
     legacy_exact = list_values(evidence.get("target_venues", []))
     legacy_related = list_values(evidence.get("related_venue_families", []))
     source_passes = list_values(config.get("source_passes", []))
+    evidence_context: dict[str, object] = {
+        "named_evidence_filters": named_filters,
+        "named_evidence_filter_names": named_filter_name_list,
+        "honor_sources": list_values(evidence.get("honor_sources", [])),
+        "identity_sources": list_values(evidence.get("identity_sources", [])),
+    }
+    if legacy_exact:
+        evidence_context["legacy_exact_evidence_names"] = legacy_exact
+    if legacy_related:
+        evidence_context["legacy_related_evidence_groups"] = legacy_related
 
     return {
         "workspace": str(workspace),
@@ -58,25 +68,12 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
             "age_policy": constraints.get("age_policy", ""),
             "additional_constraints": list_values(constraints.get("additional_constraints", [])),
         },
-        "evidence": {
-            "named_evidence_filters": named_filters,
-            "named_evidence_filter_names": named_filter_name_list,
-            "target_venues": legacy_exact,
-            "related_venue_families": legacy_related,
-            "honor_sources": list_values(evidence.get("honor_sources", [])),
-            "identity_sources": list_values(evidence.get("identity_sources", [])),
-            "legacy_exact_evidence_names": legacy_exact,
-            "legacy_related_evidence_groups": legacy_related,
-        },
+        "evidence": evidence_context,
         "terminology": {
             "named_evidence_filters": "user-owned concrete evidence labels",
             "named_evidence_filter_names": "configured concrete evidence labels by name",
-            "target_venues": "legacy exact evidence names",
-            "related_venue_families": "legacy related evidence groups",
             "evidence_items": "concrete filterable evidence labels found for an entity",
             "evidence_summary": "short explanation of matched evidence labels",
-            "target_venue_exact": "legacy exact configured evidence flag",
-            "target_venue_family": "legacy related configured evidence flag",
             "age": "publicly sourced or transparent estimated age",
             "age_evidence": "source or caveat for age collection",
         },

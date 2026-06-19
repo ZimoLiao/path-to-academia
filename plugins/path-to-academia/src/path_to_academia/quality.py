@@ -45,7 +45,6 @@ def build_quality_report(workspace: Path) -> dict[str, object]:
         "honors",
         "evidence_items",
         "evidence_summary",
-        "target_publication_evidence",
         "age",
         "age_evidence",
     ]

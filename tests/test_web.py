@@ -260,6 +260,8 @@ def test_static_ui_named_evidence_and_age_keys_are_wired_consistently() -> None:
         "relatedVenue",
         "sort.venue",
         "venueScore",
+        "Exact configured evidence",
+        "Related configured evidence",
     ]
     surface = html + "\n" + js + "\n" + json.dumps(i18n)
     for fragment in stale_fragments:
@@ -271,8 +273,8 @@ def test_static_ui_derives_evidence_facets_for_legacy_rows() -> None:
     js = (root / "src" / "path_to_academia" / "webui" / "static" / "app.js").read_text(encoding="utf-8")
 
     assert "function parseEvidenceItems(row)" in js
-    assert "function legacyEvidenceItems(row)" in js
-    assert "LEGACY_EXACT_EVIDENCE_ITEM" in js
+    assert "function legacyPublicationEvidenceItems(row)" in js
+    assert "function isCompactEvidenceLabel(value)" in js
     assert "function ageValue(value)" in js
 
 
@@ -352,9 +354,9 @@ state.records = [
 state.evidenceFacets = buildEvidenceFacets();
 results.push(["facets", state.evidenceFacets.map(([item]) => item)]);
 
-    state.filters.evidenceItems = new Set(["Exact configured evidence"]);
+    state.filters.evidenceItems = new Set(["Science"]);
     let controls = readFilterControls();
-    results.push(["legacyExact", state.records.filter((row) => rowMatchesControls(row, controls)).map((row) => row.name)]);
+    results.push(["legacyScience", state.records.filter((row) => rowMatchesControls(row, controls)).map((row) => row.name)]);
 
     state.filters.evidenceItems = new Set();
     els.minAge.value = "40";
@@ -395,9 +397,10 @@ process.stdout.write(JSON.stringify(results));
     completed = subprocess.run(["node"], input=script, text=True, capture_output=True, check=True)
     result = dict(json.loads(completed.stdout))
 
-    assert {"Nature", "NeurIPS", "Exact configured evidence", "Related configured evidence", "Legacy Medal"}.issubset(set(result["facets"]))
-    assert "Science" not in set(result["facets"])
-    assert result["legacyExact"] == ["Legacy Evidence"]
+    assert {"Nature", "NeurIPS", "Science", "Cell", "Legacy Medal"}.issubset(set(result["facets"]))
+    assert "Exact configured evidence" not in set(result["facets"])
+    assert "Related configured evidence" not in set(result["facets"])
+    assert result["legacyScience"] == ["Legacy Evidence"]
     assert result["minAge40"] == ["New Evidence"]
     assert result["maxAge39"] == ["Legacy Evidence"]
     assert "Blank Age" not in result["nonNumericAge"]

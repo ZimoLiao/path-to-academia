@@ -1,6 +1,6 @@
 # Architecture
 
-path to academia is a local-first, agent-native workspace. The product has four layers:
+path to academia is a local-first workflow for coding agents. The product has five layers:
 
 1. **Marketplace metadata** in `.agents/plugins/marketplace.json` and
    `.claude-plugin/marketplace.json`.
@@ -11,7 +11,7 @@ path to academia is a local-first, agent-native workspace. The product has four 
 
 The package has no runtime dependencies outside the Python standard library.
 
-## Agent-Native Flow
+## Agent Flow
 
 The skill starts with Guided Intake. The agent asks for the research direction, opportunity type,
 constraints, geographic scope, evidence signals, and output shape before collecting data. Those

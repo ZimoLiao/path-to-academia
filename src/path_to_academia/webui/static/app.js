@@ -1,6 +1,4 @@
 const STATUS_OPTIONS = ["none", "to_apply", "shortlist", "contacted", "waiting_reply", "follow-up", "applied", "rejected"];
-const LEGACY_EXACT_EVIDENCE_ITEM = "Exact configured evidence";
-const LEGACY_RELATED_EVIDENCE_ITEM = "Related configured evidence";
 
 const LANGUAGE_NAMES = {
   en: "English",
@@ -188,8 +186,6 @@ function enrichRecord(row) {
     hNum,
     citeNum,
     ageNum,
-    hasExactConfiguredEvidence: yesish(row.target_venue_exact),
-    hasRelatedConfiguredEvidence: yesish(row.target_venue_family),
     hasHonors: Boolean(clean(row.honors)),
     missingMetrics: hNum === null || citeNum === null,
   };
@@ -725,8 +721,6 @@ function fitScore(row) {
 
 function evidenceScore(row) {
   let score = row.evidenceItems.length;
-  if (row.hasExactConfiguredEvidence) score += 2;
-  if (row.hasRelatedConfiguredEvidence) score += 1;
   if (row.hasHonors) score += 1;
   return score;
 }
@@ -755,16 +749,21 @@ function splitList(value) {
 
 function parseEvidenceItems(row) {
   const explicit = splitList(row.evidence_items);
-  const compatibilityEvidence = explicit.length ? [] : legacyEvidenceItems(row);
+  const compatibilityEvidence = explicit.length ? [] : legacyPublicationEvidenceItems(row);
   const fallbackHonors = explicit.length ? [] : splitList(row.honors);
   return dedupeStrings([...explicit, ...compatibilityEvidence, ...fallbackHonors]);
 }
 
-function legacyEvidenceItems(row) {
-  const labels = [];
-  if (yesish(row.target_venue_exact)) labels.push(LEGACY_EXACT_EVIDENCE_ITEM);
-  if (yesish(row.target_venue_family)) labels.push(LEGACY_RELATED_EVIDENCE_ITEM);
-  return labels;
+function legacyPublicationEvidenceItems(row) {
+  return splitList(row.target_publication_evidence).filter(isCompactEvidenceLabel);
+}
+
+function isCompactEvidenceLabel(value) {
+  const text = clean(value);
+  if (!text || text.length > 80) return false;
+  if (/[.!?]$/.test(text)) return false;
+  if (/\b(evidence|matched|synthetic|source|publication)\b/i.test(text)) return false;
+  return true;
 }
 
 function dedupeStrings(values) {
@@ -776,10 +775,6 @@ function dedupeStrings(values) {
     seen.add(folded);
     return true;
   });
-}
-
-function yesish(value) {
-  return ["yes", "true", "1", "y"].includes(String(value || "").trim().toLowerCase());
 }
 
 function compareNum(a, b) {

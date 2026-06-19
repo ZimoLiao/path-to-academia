@@ -2,8 +2,7 @@
 
 Date: 2026-06-17
 
-This audit applies the compound-engineering agent-native architecture principles to path to
-academia 1.x.
+This audit applies the compound-engineering agent workflow principles to path to academia 1.x.
 
 ## Score Summary
 
@@ -22,7 +21,7 @@ Overall score: 44/53, or 83%.
 
 ## Public Release Readiness
 
-The project is agent-native enough for public release because it has:
+The project is ready for public agent workflows because it has:
 
 - a single Guided Intake entrypoint for new workspaces
 - a context command for fresh agent sessions
@@ -35,5 +34,5 @@ The project is agent-native enough for public release because it has:
 
 - Add `status-delete` if users need explicit removal instead of status updates.
 - Add a UI refresh button or file polling if long-running agents update workspaces while the UI is open.
-- Add screenshot or video demo assets after the public repository exists.
+- Add a hosted demo site or short video walkthrough after public usage clarifies the best examples.
 - Add artifact signing or SBOM generation if releases move beyond source distribution and local installs.
