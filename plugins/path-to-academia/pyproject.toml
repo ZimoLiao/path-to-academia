@@ -39,7 +39,7 @@ path-to-academia = "path_to_academia.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-path_to_academia = ["webui/static/*"]
+path_to_academia = ["webui/static/*", "data/examples/ml-bio/**/*.md", "data/examples/ml-bio/**/*.json", "data/examples/ml-bio/**/*.csv"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

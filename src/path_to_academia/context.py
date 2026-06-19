@@ -99,7 +99,7 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
             "Preserve source URLs and audit notes for manual judgments.",
             "Treat blank enrichment as unknown or not collected, not negative evidence.",
             "Keep named evidence filters, honor sources, age policy, and other constraints user-owned; ask before auto-filling broad lists.",
-            "Collect Google Scholar author-page links when available, or audit why they were not collected.",
+            "Collect Google Scholar author-page links when available; otherwise use a clearly labeled search link or audit why Scholar was not collected.",
             "Collect age only from public sourced facts or transparent estimates, and leave it blank when unreliable.",
         ],
     }

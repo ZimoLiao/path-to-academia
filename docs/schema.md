@@ -84,7 +84,8 @@ Evidence fields:
 Identity-link fields:
 
 - `homepage_url`: official homepage, lab page, or institutional profile.
-- `scholar_url`: Google Scholar or equivalent author page when verified.
+- `scholar_url`: Google Scholar author profile URL, or a clearly labeled Google Scholar search URL
+  when a verified profile has not been collected.
 - `orcid_url`, `openalex_url`, `semantic_scholar_url`: persistent scholarly profiles when verified.
 
 Classification fields:

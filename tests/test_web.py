@@ -38,8 +38,8 @@ def test_web_api_serves_workspace_records_and_status(tmp_path: Path) -> None:
         server.server_close()
 
     assert health["status"] == "ok"
-    assert health["entity_count"] == 3
-    assert records["count"] == 3
+    assert health["entity_count"] >= 50
+    assert records["count"] >= 50
     assert records["source"] == "tables/entities_final.csv"
     assert statuses["count"] == 0
 

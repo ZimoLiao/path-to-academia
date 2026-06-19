@@ -39,7 +39,8 @@ questions:
   keynote lists, editorial boards, and committees
 - age policy, including whether to collect public sourced age, transparent estimates, or no age
   data
-- identity-link sources to collect, including Google Scholar author pages when the user cares about
+- identity-link sources to collect, including Google Scholar author pages or clearly labeled Scholar
+  search links when the user cares about
   them
 - any other constraints or things to emphasize, avoid, or handle carefully
 

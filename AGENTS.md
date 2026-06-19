@@ -30,8 +30,9 @@ smoke, package build, wheel install, i18n consistency, and stale private-domain 
 
 - Preserve the separation between public fact tables and private outreach state.
 - Treat blank enrichment as unknown or not collected, not negative evidence.
-- Keep examples synthetic and generic. The default example can use machine learning and biology,
-  but should not imply those are the product's only supported domains.
+- Keep examples generic in product meaning. Demo rows may be real, but their source scope and
+  verification limits must be explicit, and the default biology demo must not imply that biology is
+  the product's only supported domain.
 - Do not add generated files, build artifacts, caches, `.egg-info`, `__pycache__`, or local
   workspaces to the repository.
 - Do not add tests that lock in user-customizable domain content. Tests should guard generic

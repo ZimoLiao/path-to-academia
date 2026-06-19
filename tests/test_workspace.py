@@ -33,30 +33,33 @@ def test_init_workspace_creates_generic_ml_bio_example(tmp_path: Path) -> None:
         assert (workspace / dirname).is_dir()
 
     config = json.loads((workspace / "configs" / "domain.json").read_text(encoding="utf-8"))
-    assert config["project"]["name"] == "ML and Biology Starter Workspace"
+    assert config["project"]["name"] == "Spatial Transcriptomics and Single-Cell Biology Demo"
     assert "inclusion_terms" in config["domain"]
     assert "named_evidence_filters" in config["evidence"]
     assert "honor_sources" in config["evidence"]
     assert "age_policy" in config["constraints"]
     assert "additional_constraints" in config["constraints"]
     assert "sentinel_checks" in config
+    assert (workspace / "audit" / "demo_source_note.md").exists()
 
     entities = read_rows(workspace / "tables" / "entities_final.csv")
-    assert len(entities) == 3
+    assert len(entities) >= 50
     assert list(entities[0].keys()) == schemas.ENTITY_FIELDS
-    assert entities[0]["evidence_items"] == "Nature Machine Intelligence; NeurIPS; Example Academy Fellowship; Example Early Career Medal"
-    assert entities[0]["age_as_of"] == entities[0]["retrieved_at"].split("T", 1)[0]
-    assert int(entities[0]["age"]) == int(entities[0]["age_as_of"][:4]) - int(entities[0]["birth_year"])
-    assert "synthetic" in entities[0]["age_evidence"].lower()
-    assert {row["domain_tags"] for row in entities} == {
-        "machine learning; representation learning",
-        "computational biology; genomics",
-        "biomedical AI; clinical translation",
-    }
+    assert len({row["name"].lower() for row in entities}) == len(entities)
+    assert all(row["source_batch"] == "openalex_spatial_single_cell_demo_20260619" for row in entities)
+    assert all(row["openalex_url"].startswith("https://openalex.org/") for row in entities)
+    assert all(row["scholar_url"].startswith("https://scholar.google.com/scholar?") for row in entities)
+    assert all(row["evidence_items"] for row in entities)
+    assert any("spatial transcriptomics" in row["evidence_items"].lower() for row in entities)
+    serialized = "\n".join(" ".join(row.values()) for row in entities).lower()
+    assert "example.org" not in serialized
+    assert "synthetic" not in serialized
+    assert "mock" not in serialized
 
     sources = read_rows(workspace / "raw" / "source_records.csv")
-    assert len(sources) == 3
+    assert len(sources) == len(entities)
     assert list(sources[0].keys()) == schemas.SOURCE_FIELDS
+    assert all(row["source_type"] == "publication_source" for row in sources)
 
 
 def test_init_workspace_empty_example_has_blank_config_and_tables(tmp_path: Path) -> None:
@@ -119,7 +122,7 @@ def test_status_sidecar_does_not_modify_fact_table(tmp_path: Path) -> None:
             "institution": row["institution"],
             "status": "to_apply",
             "priority": "high",
-            "private_note": "Synthetic test note",
+            "private_note": "Private test note",
         },
     )
 
@@ -177,16 +180,17 @@ def test_quality_checks_find_blank_fields_and_duplicates(tmp_path: Path) -> None
 
     report = run_quality_checks(workspace)
 
-    assert report["row_count"] == 4
+    assert report["row_count"] == len(rows)
     assert report["duplicate_person_keys"] == 1
     assert "summary_text" in report["blank_required_fields"]
-    assert report["enrichment_coverage"]["scholar_url"] == 0
-    assert report["enrichment_coverage"]["honors"] == 3
-    assert report["enrichment_coverage"]["evidence_items"] == 4
-    assert report["enrichment_coverage"]["evidence_summary"] == 4
+    assert report["enrichment_coverage"]["scholar_url"] == len(rows)
+    assert report["enrichment_coverage"]["openalex_url"] == len(rows)
+    assert report["enrichment_coverage"]["honors"] == 0
+    assert report["enrichment_coverage"]["evidence_items"] == len(rows)
+    assert report["enrichment_coverage"]["evidence_summary"] == len(rows)
     assert "target_publication_evidence" not in report["enrichment_coverage"]
-    assert report["enrichment_coverage"]["age"] == 4
-    assert report["enrichment_coverage"]["age_evidence"] == 4
+    assert report["enrichment_coverage"]["age"] == 0
+    assert report["enrichment_coverage"]["age_evidence"] == 0
     assert report["unmatched_status_count"] == 0
 
 

@@ -222,7 +222,16 @@ def validate_i18n() -> None:
 
 
 def validate_residue() -> None:
-    patterns = ["Atlas", "atlas", r"\baoa\b", "aoa_", "serve_atlas", "topCited", "top_cited", "TODO", "FIXME"]
+    patterns = [
+        "Academic Opportunity Atlas",
+        "PI Atlas",
+        "aoa_",
+        "serve_atlas",
+        "topCited",
+        "top_cited",
+        "TODO",
+        "FIXME",
+    ]
     hits: list[str] = []
     for path in ROOT.rglob("*"):
         if not path.is_file() or any(part.startswith(".git") for part in path.parts):
@@ -360,7 +369,7 @@ def validate_workspace() -> None:
         run([sys.executable, "scripts/init_workspace.py", str(workspace), "--example", "ml-bio", "--force"])
         run([sys.executable, "scripts/qa_workspace.py", str(workspace)])
         context = run_json([sys.executable, "scripts/workspace_context.py", str(workspace)])
-        if context.get("quality", {}).get("row_count") != 3:
+        if context.get("quality", {}).get("row_count", 0) < 50:
             raise SystemExit("workspace context did not report the example rows")
         run(
             [
@@ -389,7 +398,7 @@ def validate_plugin_bundle_runtime() -> None:
             )
             run([sys.executable, "scripts/qa_workspace.py", str(workspace)], cwd=PLUGIN_BUNDLE)
             context = run_json([sys.executable, "scripts/workspace_context.py", str(workspace)], cwd=PLUGIN_BUNDLE)
-            if context.get("quality", {}).get("row_count") != 3:
+            if context.get("quality", {}).get("row_count", 0) < 50:
                 raise SystemExit("plugin bundle context did not report the example rows")
             outdir = Path(tmp) / "dist"
             run([sys.executable, "-m", "build", "--outdir", str(outdir)], cwd=PLUGIN_BUNDLE)

@@ -6,6 +6,9 @@ find potential PhD or postdoc supervisors, labs, and open academic positions.
 Tell the agent your research direction and constraints; it asks the right questions, searches
 current sources, saves a traceable candidate table, and opens a Web UI for review.
 
+The screenshot below uses the built-in real demo: 60 OpenAlex-derived spatial transcriptomics and
+single-cell biology candidates, with source links and caveats preserved.
+
 ![path to academia biology demo Web UI](docs/assets/path-to-academia-biology-demo.png)
 
 ## Getting Started
@@ -23,7 +26,7 @@ Do not start source collection until the basic brief is clear.
 
 ## Quick Example
 
-Try the built-in machine-learning-and-biology demo:
+Try the built-in real biology demo:
 
 ```bash
 git clone https://github.com/ZimoLiao/path-to-academia.git
@@ -35,6 +38,10 @@ path-to-academia serve ./workspace --port 8765
 ```
 
 Then open `http://127.0.0.1:8765/`.
+
+The demo is source-limited by design. It is useful for testing the plugin and Web UI, but a real
+supervisor search should still verify official profiles, current roles, Google Scholar profiles,
+honors, age, and open positions before outreach.
 
 For a real project, start with an empty configurable workspace:
 

@@ -16,23 +16,19 @@ def test_cli_initializes_checks_and_exports_workspace(tmp_path: Path, capsys) ->
 
     assert main(["qa", str(workspace)]) == 0
     qa_output = json.loads(capsys.readouterr().out)
-    assert qa_output["row_count"] == 3
+    assert qa_output["row_count"] >= 50
     assert qa_output["duplicate_person_keys"] == 0
 
     assert main(["context", str(workspace)]) == 0
     context_output = json.loads(capsys.readouterr().out)
-    assert context_output["project"]["name"] == "ML and Biology Starter Workspace"
-    assert context_output["quality"]["row_count"] == 3
+    assert context_output["project"]["name"] == "Spatial Transcriptomics and Single-Cell Biology Demo"
+    assert context_output["quality"]["row_count"] >= 50
     assert context_output["evidence"]["named_evidence_filters"]
-    assert context_output["evidence"]["named_evidence_filter_names"] == [
-        "Nature",
-        "Science",
-        "NeurIPS",
-        "Cell Systems",
-        "Example Academy Fellowship",
-    ]
+    assert "OpenAlex topic: Single-cell and spatial transcriptomics" in context_output["evidence"]["named_evidence_filter_names"]
+    assert "Nature Biotechnology" in context_output["evidence"]["named_evidence_filter_names"]
+    assert "Cell" in context_output["evidence"]["named_evidence_filter_names"]
     assert context_output["evidence"]["honor_sources"]
-    assert "Google Scholar author page" in context_output["evidence"]["identity_sources"]
+    assert "Google Scholar author page or search link" in context_output["evidence"]["identity_sources"]
     assert context_output["terminology"]["named_evidence_filters"] == "user-owned concrete evidence labels"
     assert context_output["terminology"]["named_evidence_filter_names"] == "configured concrete evidence labels by name"
     assert context_output["terminology"]["evidence_items"] == "concrete filterable evidence labels found for an entity"

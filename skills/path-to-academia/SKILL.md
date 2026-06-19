@@ -35,8 +35,9 @@ Minimum intake:
    boards, or committee lists worth reverse-scanning.
 7. age policy: whether PI age should be collected, which public sources or transparent estimates
    are acceptable, and whether unreliable age should remain blank.
-8. identity and metric sources: official profiles, Google Scholar author pages, ORCID, OpenAlex,
-   Semantic Scholar, metrics, publication evidence, and freshness requirements.
+8. identity and metric sources: official profiles, Google Scholar author pages or clearly labeled
+   Scholar search links, ORCID, OpenAlex, Semantic Scholar, metrics, publication evidence, and
+   freshness requirements.
 9. other constraints: ask an open-ended question for anything else the user wants emphasized,
    avoided, or handled carefully.
 10. sentinel checks: must-include people, groups, roles, journals, conferences, institutions, or source families

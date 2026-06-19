@@ -1,26 +1,28 @@
 {
   "project": {
-    "name": "ML and Biology Starter Workspace",
-    "description": "Synthetic starter workspace for research groups and open roles."
+    "name": "Spatial Transcriptomics and Single-Cell Biology Demo",
+    "description": "Real demo workspace generated from OpenAlex topic evidence for spatial transcriptomics and single-cell/multiomics biology."
   },
   "domain": {
     "inclusion_terms": [
-      "machine learning",
-      "representation learning",
+      "spatial transcriptomics",
+      "single-cell RNA sequencing",
+      "single-cell multiomics",
+      "cell atlas",
       "computational biology",
-      "genomics",
-      "biomedical AI",
-      "clinical translation"
+      "genomics"
     ],
     "review_terms": [
-      "adjacent methods",
-      "platform team",
-      "infrastructure"
+      "method-only software",
+      "large consortium record",
+      "unclear current institution",
+      "industry affiliation requiring manual fit check"
     ],
     "exclusion_terms": [
-      "student-only",
-      "expired",
-      "unverified identity"
+      "consortium-only author",
+      "news/editorial item",
+      "unresolved person identity",
+      "off-topic omics without single-cell or spatial evidence"
     ]
   },
   "constraints": {
@@ -32,47 +34,88 @@
     "geographic_scope": [
       "global"
     ],
-    "age_policy": "Collect only public sourced or clearly estimated age; leave blank when unreliable.",
+    "age_policy": "Leave PI age blank unless a public source or transparent estimate is collected in a real workspace.",
     "additional_constraints": [
-      "prioritize active groups with auditable source links"
+      "demo rows must be real people from current scholarly sources",
+      "do not infer current role, age, honors, or hiring status from OpenAlex alone",
+      "Google Scholar links are search links unless later replaced by verified author profiles"
     ]
   },
   "evidence": {
     "named_evidence_filters": [
       {
-        "name": "Nature",
+        "name": "OpenAlex topic: Single-cell and spatial transcriptomics",
+        "type": "topic",
+        "description": "Primary OpenAlex topic used to discover real demo rows."
+      },
+      {
+        "name": "Nature Biotechnology",
         "type": "journal",
-        "description": "Exact Nature journal evidence; keep separate from broader publisher families."
+        "description": "Exact journal label from OpenAlex source metadata."
+      },
+      {
+        "name": "Nature Methods",
+        "type": "journal",
+        "description": "Exact journal label from OpenAlex source metadata."
+      },
+      {
+        "name": "Cell",
+        "type": "journal",
+        "description": "Exact journal label from OpenAlex source metadata."
       },
       {
         "name": "Science",
         "type": "journal",
-        "description": "Exact Science journal evidence; keep separate from broader publisher families."
+        "description": "Exact journal label from OpenAlex source metadata."
       },
       {
-        "name": "NeurIPS",
-        "type": "conference",
-        "description": "Named machine-learning conference evidence for method-focused rows."
-      },
-      {
-        "name": "Cell Systems",
+        "name": "Nature Genetics",
         "type": "journal",
-        "description": "Named computational-biology journal evidence."
+        "description": "Exact journal label from OpenAlex source metadata."
       },
       {
-        "name": "Example Academy Fellowship",
-        "type": "honor",
-        "description": "Synthetic fellowship used to demonstrate medal or fellowship filters."
+        "name": "Nature Communications",
+        "type": "journal",
+        "description": "Exact journal label from OpenAlex source metadata."
+      },
+      {
+        "name": "Genome biology",
+        "type": "journal",
+        "description": "Exact journal label from OpenAlex source metadata."
+      },
+      {
+        "name": "Human Cell Atlas",
+        "type": "program",
+        "description": "Named cell-atlas evidence when present in a work title or source context."
+      },
+      {
+        "name": "spatial transcriptomics",
+        "type": "method",
+        "description": "Concrete method label from title evidence."
+      },
+      {
+        "name": "single-cell multiomics",
+        "type": "method",
+        "description": "Concrete method label from title evidence."
+      },
+      {
+        "name": "cell atlas",
+        "type": "program",
+        "description": "Concrete atlas label from title evidence."
       }
     ],
     "honor_sources": [
-      "academy fellowships",
-      "society fellows and awards",
-      "conference invited/keynote lists"
+      "National Academy of Sciences members and awards",
+      "Royal Society fellows and medals",
+      "EMBO membership and awards",
+      "ISCB fellows and awards",
+      "ISSCR awards",
+      "HHMI investigators",
+      "Allen Distinguished Investigator program"
     ],
     "identity_sources": [
       "official profile",
-      "Google Scholar author page",
+      "Google Scholar author page or search link",
       "ORCID",
       "OpenAlex",
       "Semantic Scholar"
@@ -80,22 +123,34 @@
   },
   "source_passes": [
     {
-      "name": "official group pages",
-      "type": "profile_source"
+      "name": "OpenAlex topic pass",
+      "type": "publication_source",
+      "query": "topics.id:T11289, from_publication_date >= 2021-01-01, type=article, sort=cited_by_count:desc"
     },
     {
-      "name": "conference award and keynote lists",
-      "type": "reverse_discovery"
+      "name": "official profile enrichment pass",
+      "type": "profile_source",
+      "status": "recommended next pass for real user projects"
     },
     {
-      "name": "open position boards",
-      "type": "position_source"
+      "name": "Google Scholar verification pass",
+      "type": "scholarly_profile_source",
+      "status": "recommended next pass for replacing search URLs with verified profile URLs"
+    },
+    {
+      "name": "honors reverse-discovery pass",
+      "type": "reverse_discovery",
+      "status": "configured but not run for this demo dataset"
     }
   ],
   "sentinel_checks": [
     {
-      "name": "Example must-include group",
-      "reason": "User-provided coverage check"
+      "name": "at least 50 real people",
+      "reason": "public README demo should not use mock rows"
+    },
+    {
+      "name": "Single-cell and spatial transcriptomics",
+      "reason": "primary OpenAlex topic must be represented in evidence_items"
     }
   ]
 }

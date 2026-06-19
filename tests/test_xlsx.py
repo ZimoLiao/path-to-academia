@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import zipfile
+import csv
 from pathlib import Path
 from xml.etree import ElementTree
 
@@ -25,4 +26,6 @@ def test_write_xlsx_preserves_csv_rows(tmp_path: Path) -> None:
     write_xlsx(csv_path, xlsx_path)
 
     assert xlsx_path.exists()
-    assert worksheet_row_count(xlsx_path) == 4
+    with csv_path.open(newline="", encoding="utf-8-sig") as handle:
+        expected_rows = len(list(csv.DictReader(handle))) + 1
+    assert worksheet_row_count(xlsx_path) == expected_rows

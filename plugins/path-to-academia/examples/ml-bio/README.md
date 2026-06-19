@@ -1,13 +1,6 @@
-# ML And Biology Example
+# ML and Biology Example
 
-This example is a synthetic starter domain for testing the workflow without private data. It defines
-inclusion terms, review terms, named evidence filters, and source-pass ideas for a
-mixed machine learning and biology workspace.
+This example is a real demo workspace for spatial transcriptomics and single-cell/multiomics biology.
+It was generated from OpenAlex on 2026-06-19 and contains 60 real people selected from recent, highly cited works in the OpenAlex topic `Single-cell and spatial transcriptomics`.
 
-Create the example workspace with:
-
-```bash
-python3 scripts/init_workspace.py ./workspace --example ml-bio
-```
-
-Then edit `workspace/configs/domain.json` for your real project.
+The demo is intentionally source-limited: it proves the workspace, filtering, evidence, metrics, Scholar links, and Web UI flow without pretending to be a complete supervisor search. Current role, lab homepage, age, honors, hiring status, and exact Google Scholar author profiles should be verified in a real project before outreach.
