@@ -70,7 +70,7 @@ Worker output must validate before merge:
 
 - source directory crawl
 - award or keynote reverse-discovery pass
-- publication venue author pass
+- journal/conference author pass
 - open position board pass
 - metric enrichment pass
 - identity resolution pass

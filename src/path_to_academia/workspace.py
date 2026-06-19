@@ -44,7 +44,7 @@ def example_config() -> dict[str, object]:
                 "Nature Portfolio",
                 "Cell Press",
                 "major machine learning conferences",
-                "computational biology venues",
+                "computational biology journals and conferences",
             ],
             "honor_sources": [
                 "academy fellowships",
@@ -193,7 +193,7 @@ def example_entities() -> list[dict[str, str]]:
             "honors": "Example Translational Research Fellowship; Example Biomedical AI Prize",
             "target_venue_exact": "no",
             "target_venue_family": "yes",
-            "target_publication_evidence": "Synthetic medical AI venue evidence.",
+            "target_publication_evidence": "Synthetic medical AI journal/conference evidence.",
             "relevance_status": "include",
             "relevance_reason": "domain_terms_in_profile",
             "relevance_evidence": "Official example profile describes biomedical AI and clinical translation.",

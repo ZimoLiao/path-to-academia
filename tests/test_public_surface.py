@@ -4,6 +4,23 @@ import re
 from pathlib import Path
 
 
+PUBLIC_TEXT_SUFFIXES = {".py", ".md", ".json", ".toml", ".yaml", ".yml", ".html", ".css", ".js", ".cff"}
+
+
+def public_text_paths(root: Path) -> list[Path]:
+    paths: list[Path] = []
+    for path in root.rglob("*"):
+        if path.is_dir() or path.suffix not in PUBLIC_TEXT_SUFFIXES:
+            continue
+        relative_parts = path.relative_to(root).parts
+        if any(part in {".git", ".pytest_cache", "__pycache__", "build"} for part in relative_parts):
+            continue
+        if relative_parts[0] == "tests":
+            continue
+        paths.append(path)
+    return paths
+
+
 def banned_domain_terms() -> set[str]:
     return {
         "fl" + "uid",
@@ -30,6 +47,46 @@ def test_public_product_has_no_private_domain_residue() -> None:
             if term in text:
                 offenders.append(f"{path.relative_to(root)}:{term}")
     assert offenders == []
+
+
+def test_readme_current_release_matches_project_version() -> None:
+    root = Path(__file__).resolve().parents[1]
+    pyproject = (root / "pyproject.toml").read_text(encoding="utf-8")
+    readme = (root / "README.md").read_text(encoding="utf-8")
+
+    version_match = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, flags=re.MULTILINE)
+    readme_match = re.search(r"Current release:\s*`([^`]+)`", readme)
+
+    assert version_match is not None
+    assert readme_match is not None
+    assert readme_match.group(1) == version_match.group(1)
+
+
+def test_release_metadata_versions_match_project_version() -> None:
+    root = Path(__file__).resolve().parents[1]
+    pyproject = (root / "pyproject.toml").read_text(encoding="utf-8")
+    version_match = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, flags=re.MULTILINE)
+    assert version_match is not None
+    version = version_match.group(1)
+
+    version_sources = {
+        "src/path_to_academia/__init__.py": r'__version__\s*=\s*"([^"]+)"',
+        "plugins/path-to-academia/src/path_to_academia/__init__.py": r'__version__\s*=\s*"([^"]+)"',
+        "CITATION.cff": r'^version:\s*"([^"]+)"',
+        "plugins/path-to-academia/CITATION.cff": r'^version:\s*"([^"]+)"',
+        "plugins/path-to-academia/pyproject.toml": r'^version\s*=\s*"([^"]+)"',
+    }
+
+    mismatches: list[str] = []
+    for relative_path, pattern in version_sources.items():
+        text = (root / relative_path).read_text(encoding="utf-8")
+        match = re.search(pattern, text, flags=re.MULTILINE)
+        if not match:
+            mismatches.append(f"{relative_path}:missing")
+        elif match.group(1) != version:
+            mismatches.append(f"{relative_path}:{match.group(1)}")
+
+    assert mismatches == []
 
 
 def test_skill_markdown_references_exist() -> None:
@@ -96,8 +153,8 @@ def test_guided_intake_requires_separate_evidence_questions() -> None:
 
     required_terms = [
         "ask these as separate questions",
-        "target venues",
-        "related venue families",
+        "target journals/conferences",
+        "related journal/conference families",
         "honor sources",
         "other constraints",
         "do not auto-fill",
@@ -106,6 +163,38 @@ def test_guided_intake_requires_separate_evidence_questions() -> None:
 
     missing = [term for term in required_terms if term not in surface]
     assert missing == []
+
+
+def test_public_guidance_uses_clear_journal_conference_terms() -> None:
+    root = Path(__file__).resolve().parents[1]
+    banned_phrases = [
+        "target venues",
+        "target venue",
+        "related venue families",
+        "related venue family",
+        "publication venue",
+        "publication venues",
+        "venue evidence",
+        "venue constraints",
+        "venue sweeps",
+        "venue family",
+        "venue families",
+        "venue/award",
+        "venue-family",
+        "target-venue",
+        "evidence venues",
+        "publication signal",
+        "publication signals",
+        "synthetic medical ai venue evidence",
+    ]
+    offenders: list[str] = []
+    for path in public_text_paths(root):
+        text = path.read_text(encoding="utf-8", errors="ignore").lower()
+        for phrase in banned_phrases:
+            if phrase in text:
+                offenders.append(f"{path.relative_to(root)}:{phrase}")
+
+    assert offenders == []
 
 
 def test_collection_playbook_deposits_large_collection_lessons() -> None:

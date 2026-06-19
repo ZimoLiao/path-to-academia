@@ -32,16 +32,16 @@ coverage boundary.
 Before source expansion, confirm high-signal prioritization inputs with the user as separate
 questions:
 
-- exact target venues, usually a short list rather than a full field bibliography
-- related venue families that count as adjacent evidence
+- exact target journals/conferences, usually a short list rather than a full field bibliography
+- related journal/conference families that count as adjacent evidence
 - honor sources for reverse discovery, such as awards, medals, fellowships, academies, invited or
   keynote lists, editorial boards, and committees
 - identity-link sources to collect, including Google Scholar author pages when the user cares about
   them
 - any other constraints or things to emphasize, avoid, or handle carefully
 
-Do not auto-fill broad target-venue or honor-source lists from field assumptions. If defaults are
-needed, propose a compact provisional list and record that it was not user-confirmed.
+Do not auto-fill broad target journal/conference or honor-source lists from field assumptions. If
+defaults are needed, propose a compact provisional list and record that it was not user-confirmed.
 
 Keep source-batch accounting from the first pass. Every source family should have a batch name,
 row count, retrieval date, access method, and caveat in `audit/`. If a table is mostly seed data,
@@ -50,7 +50,7 @@ say so explicitly and continue expanding independent sources.
 Run independent source-family passes:
 
 - official department, institute, center, lab, and program directories
-- journal, venue-family, proceedings, special-issue, and editorial-board passes
+- journal, related journal-family, proceedings, special-issue, and editorial-board passes
 - conference, workshop, keynote, program-committee, and society passes
 - award, medal, fellowship, academy, and invited-lecture reverse-discovery passes
 - funder project databases, grant rosters, fellowship calls, and hiring pages
@@ -61,7 +61,7 @@ When the user supplies must-include examples, use them as sentinel coverage chec
 missing, expand the source strategy instead of defending the partial pass.
 
 Record sentinel checks in `configs/domain.json`. A sentinel can be a known person, group, role,
-venue, institution, or source family that the final database must include or explicitly explain.
+journal, conference, institution, or source family that the final database must include or explicitly explain.
 Fail the pass when a sentinel is absent, misclassified, or downgraded without an audit note.
 
 ## Incremental Persistence
@@ -122,7 +122,7 @@ limits. Prefer small bounded concurrency, caching, resume points, and source-spe
 
 ## Publication Evidence
 
-Publication signals are prioritization evidence, not proof that someone lacks impact.
+Publication evidence is prioritization evidence, not proof that someone lacks impact.
 
 Use author-identity-backed sources when possible. Name-only publication search is especially risky
 for common names and cross-field surnames. Keep unverified hits in a review table rather than
@@ -132,12 +132,12 @@ Good publication passes produce:
 
 - raw paper rows
 - per-entity summaries
-- exact target-venue flags
-- related venue-family flags
+- exact target journal/conference flags
+- related journal/conference family flags
 - a manual-check table for ambiguous matches
 - notes explaining API limits and false-positive patterns
 
-Do not infer a negative publication signal from missing enrichment.
+Do not infer negative publication evidence from missing enrichment.
 
 Rejected or unsafe evidence paths should stay documented. For example, if a source creates
 name-only false positives, keep its output as review/provenance or discard it with an audit note;

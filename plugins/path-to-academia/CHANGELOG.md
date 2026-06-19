@@ -1,12 +1,21 @@
 # Changelog
 
+## 1.0.5 - 2026-06-19
+
+- Replaced ambiguous publication-place wording with explicit journal/conference language across
+  Guided Intake, docs, schema descriptions, default prompts, examples, and Web UI labels.
+- Kept released compatibility keys such as `target_venues` and `target_venue_exact`, but documented
+  them as target journal/conference lists and evidence fields.
+- Added regression tests so public guidance and UI labels do not drift back to unclear publication
+  terminology.
+
 ## 1.0.4 - 2026-06-18
 
-- Split Guided Intake evidence setup into separate required questions for exact target venues,
-  related venue families, honor sources, identity-link sources, and open-ended additional
-  constraints.
-- Clarified that target venues are user-owned high-signal prioritization anchors, not an
-  agent-generated full field bibliography.
+- Split Guided Intake evidence setup into separate required questions for exact target
+  journals/conferences, related journal/conference families, honor sources, identity-link sources,
+  and open-ended additional constraints.
+- Clarified that target journals/conferences are user-owned high-signal prioritization anchors, not
+  an agent-generated full field bibliography.
 - Added `related_venue_families`, `honor_sources`, and `constraints.additional_constraints` to
   workspace config and context output.
 - Added quality-report enrichment coverage for profile links, Google Scholar links, honors, and
@@ -16,8 +25,8 @@
 
 - Added direct profile/source links to result cards so homepage, scholar, ORCID, OpenAlex,
   Semantic Scholar, and primary source URLs are one click away when present.
-- Made evidence badges actionable: honors and venue badges now jump to the corresponding profile
-  section and briefly highlight the evidence.
+- Made evidence badges actionable: honors and journal/conference badges now jump to the
+  corresponding profile section and briefly highlight the evidence.
 - Linkified URLs inside dossier text and rendered source provenance as clickable source links.
 - Updated synthetic examples to use more specific honors such as fellowships and medals.
 

@@ -12,8 +12,8 @@ raw source records, final fact tables, review tables, private outreach state, qu
 Excel exports, and a local browsing UI.
 
 Use it for academic people or position discovery across any domain. Do not hardcode a discipline
-into schemas, filenames, or public documentation. Put domain-specific inclusion terms, venues, and
-source passes in `configs/domain.json`.
+into schemas, filenames, or public documentation. Put domain-specific inclusion terms,
+journal/conference lists, and source passes in `configs/domain.json`.
 
 ## Guided Intake First
 
@@ -28,23 +28,25 @@ Minimum intake:
 3. constraints: geography, institution types, career stage, funding, visa, deadlines, language, and
    must-include or must-exclude rules.
 4. geographic scope: countries, regions, institutions, and source languages to include or avoid.
-5. target venues: a short user-owned list of high-signal journals, conferences, publishers, or
+5. target journals/conferences: a short user-owned list of high-signal journals, conferences, publishers, or
    programs used for prioritization. Ask whether this should be narrow, such as only top general
-   venues, or broader domain venues. Do not auto-fill a long field bibliography.
-6. related venue families: adjacent journal families, society meetings, special issues, or
-   proceedings that should count as related evidence, separate from exact target venues.
+   journals/conferences, or broader domain publication sources. Do not auto-fill a long field
+   bibliography.
+6. related journal/conference families: adjacent journal families, society meetings, special
+   issues, or proceedings that should count as related evidence, separate from exact targets.
 7. honor sources: awards, medals, fellowships, academies, invited talks, keynote lists, editorial
    boards, or committee lists worth reverse-scanning.
 8. identity and metric sources: official profiles, Google Scholar author pages, ORCID, OpenAlex,
    Semantic Scholar, metrics, publication evidence, and freshness requirements.
 9. other constraints: ask an open-ended question for anything else the user wants emphasized,
    avoided, or handled carefully.
-10. sentinel checks: must-include people, groups, roles, venues, institutions, or source families
+10. sentinel checks: must-include people, groups, roles, journals, conferences, institutions, or source families
    that must appear or receive an explicit audit explanation.
 11. output format: CSV, wrapped XLSX, local UI, audit report, private outreach state, or a publishable
    repository.
 
-Ask these as separate questions. Do not auto-fill target venues, related venue families, or honor
+Ask these as separate questions. Do not auto-fill target journals/conferences, related
+journal/conference families, or honor
 sources from your own field assumptions without showing the proposed list and getting the user's
 confirmation. If the user is unsure, offer a compact starter list and mark it as provisional in
 `audit/`.
@@ -63,7 +65,7 @@ can practically support, bounded by available tooling, source rate limits, and t
 mergeable outputs.
 
 If subagents are available, assign each worker a distinct source pass, direction shard, geography,
-venue/award pass, open-position board, or enrichment task. The main agent owns coordination,
+journal/conference or award pass, open-position board, or enrichment task. The main agent owns coordination,
 deduplication, QA, final exports, and user-facing synthesis. If subagents are unavailable, execute
 the same shard plan sequentially and note that limitation in `audit/`.
 
@@ -95,9 +97,9 @@ Use later passes for deduplication, ranking, and polish after the raw rows are s
 Turn each user constraint into at least one source path before keyword searching. Record the planned
 paths in `configs/domain.json` and audit what each path did or did not cover.
 
-- If the user has journal or venue constraints, search journal archives, venue families, special
-  issues, proceedings, editorial boards, and recurring corresponding authors; then verify people
-  through official profiles or persistent scholarly IDs.
+- If the user has journal or conference constraints, search journal archives, conference programs,
+  journal families, proceedings, special issues, editorial boards, and recurring corresponding
+  authors; then verify people through official profiles or persistent scholarly IDs.
 - If the user names conferences, workshops, societies, awards, medals, keynotes, or program
   committees, run reverse-discovery passes from those lists to people, groups, and institutions.
 - If the user has geography or institution constraints, start from official department, institute,
@@ -157,7 +159,7 @@ boundary before changing tables.
 
 ## Workspace Contract
 
-- `configs/domain.json`: project-specific terms, venues, source-pass plan, identity sources, and
+- `configs/domain.json`: project-specific terms, journal/conference lists, source-pass plan, identity sources, and
   sentinel checks.
 - `raw/source_records.csv`: extracted source evidence and intermediate records.
 - `raw/shards/`: optional per-subagent or per-source-batch raw rows before merge.

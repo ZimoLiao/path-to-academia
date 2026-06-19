@@ -48,6 +48,12 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
             "honor_sources": list_values(evidence.get("honor_sources", [])),
             "identity_sources": list_values(evidence.get("identity_sources", [])),
         },
+        "terminology": {
+            "target_venues": "target journals/conferences",
+            "related_venue_families": "related journal/conference families",
+            "target_venue_exact": "target journal/conference evidence flag",
+            "target_venue_family": "related journal/conference family evidence flag",
+        },
         "source_passes": source_passes,
         "quality": build_quality_report(workspace),
         "files": {
@@ -69,7 +75,7 @@ def build_workspace_context(workspace: Path) -> dict[str, object]:
             "Run path-to-academia qa after table edits.",
             "Preserve source URLs and audit notes for manual judgments.",
             "Treat blank enrichment as unknown or not collected, not negative evidence.",
-            "Keep target venues, related venue families, honor sources, and other constraints user-owned; ask before auto-filling broad lists.",
+            "Keep target journals/conferences, related journal/conference families, honor sources, and other constraints user-owned; ask before auto-filling broad lists.",
             "Collect Google Scholar author-page links when available, or audit why they were not collected.",
         ],
     }

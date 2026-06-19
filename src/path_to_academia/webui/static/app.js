@@ -21,8 +21,8 @@ const state = {
   language: "en",
   translations: {},
   filters: {
-    targetVenue: false,
-    relatedVenue: false,
+    targetJournalConference: false,
+    relatedJournalConference: false,
     honors: false,
     missingMetrics: false,
     status: "",
@@ -165,8 +165,8 @@ function enrichRecord(row) {
     private_note: status.private_note || "",
     hNum,
     citeNum,
-    hasTargetVenue: yesish(row.target_venue_exact),
-    hasRelatedVenue: yesish(row.target_venue_family),
+    hasTargetJournalConference: yesish(row.target_venue_exact),
+    hasRelatedJournalConference: yesish(row.target_venue_family),
     hasHonors: Boolean(clean(row.honors)),
     missingMetrics: hNum === null || citeNum === null,
   };
@@ -222,8 +222,8 @@ function renderStatusFilters() {
 function clearFilters() {
   state.activeTag = "";
   state.filters = {
-    targetVenue: false,
-    relatedVenue: false,
+    targetJournalConference: false,
+    relatedJournalConference: false,
     honors: false,
     missingMetrics: false,
     status: "",
@@ -248,8 +248,8 @@ function applyFilters() {
     if (query && !searchableText(row).includes(query)) return false;
     if (state.activeTag && !row.tags.includes(state.activeTag)) return false;
     if (country && row.country !== country) return false;
-    if (state.filters.targetVenue && !row.hasTargetVenue) return false;
-    if (state.filters.relatedVenue && !row.hasRelatedVenue) return false;
+    if (state.filters.targetJournalConference && !row.hasTargetJournalConference) return false;
+    if (state.filters.relatedJournalConference && !row.hasRelatedJournalConference) return false;
     if (state.filters.honors && !row.hasHonors) return false;
     if (state.filters.missingMetrics && !row.missingMetrics) return false;
     if (state.filters.status && row.status !== state.filters.status) return false;
@@ -270,7 +270,7 @@ function sortRows() {
   state.filtered.sort((a, b) => {
     if (sort === "h") return compareNum(b.hNum, a.hNum) || a.name.localeCompare(b.name);
     if (sort === "citations") return compareNum(b.citeNum, a.citeNum) || a.name.localeCompare(b.name);
-    if (sort === "venue") return venueScore(b) - venueScore(a) || compareNum(b.hNum, a.hNum) || a.name.localeCompare(b.name);
+    if (sort === "journalConference") return journalConferenceScore(b) - journalConferenceScore(a) || compareNum(b.hNum, a.hNum) || a.name.localeCompare(b.name);
     if (sort === "country") return a.country.localeCompare(b.country) || a.name.localeCompare(b.name);
     if (sort === "status") return a.status.localeCompare(b.status) || a.name.localeCompare(b.name);
     if (sort === "name") return a.name.localeCompare(b.name);
@@ -286,16 +286,16 @@ function renderAll() {
 }
 
 function renderTopStats() {
-  const exact = state.records.filter((row) => row.hasTargetVenue).length;
-  const family = state.records.filter((row) => row.hasRelatedVenue).length;
+  const exact = state.records.filter((row) => row.hasTargetJournalConference).length;
+  const family = state.records.filter((row) => row.hasRelatedJournalConference).length;
   const statusCount = [...state.statuses.values()].filter((row) => row.status && row.status !== "none").length;
   const countries = new Set(state.records.map((row) => row.country).filter(Boolean)).size;
   els.topStats.innerHTML = [
     t("top.records", { count: state.records.length }),
     t("top.shown", { count: state.filtered.length }),
     t("top.countries", { count: countries }),
-    t("top.targetVenue", { count: exact }),
-    t("top.relatedVenue", { count: family }),
+    t("top.targetJournalConference", { count: exact }),
+    t("top.relatedJournalConference", { count: family }),
     t("top.statusRows", { count: statusCount }),
   ]
     .map((text) => `<span class="stat-pill">${escapeHtml(text)}</span>`)
@@ -338,8 +338,8 @@ function tagMatchesCurrentFilters(row, tag) {
   const ok =
     (!query || searchableText(row).includes(query)) &&
     (!country || row.country === country) &&
-    (!state.filters.targetVenue || row.hasTargetVenue) &&
-    (!state.filters.relatedVenue || row.hasRelatedVenue) &&
+    (!state.filters.targetJournalConference || row.hasTargetJournalConference) &&
+    (!state.filters.relatedJournalConference || row.hasRelatedJournalConference) &&
     (!state.filters.honors || row.hasHonors) &&
     (!state.filters.missingMetrics || row.missingMetrics) &&
     (!state.filters.status || row.status === state.filters.status) &&
@@ -378,8 +378,8 @@ function renderCards() {
 
 function renderCard(row) {
   const badges = [
-    row.hasTargetVenue ? evidenceBadge(row, "targetPublication", t("badge.targetVenue")) : "",
-    row.hasRelatedVenue ? evidenceBadge(row, "targetPublication", t("badge.relatedVenue")) : "",
+    row.hasTargetJournalConference ? evidenceBadge(row, "targetPublication", t("badge.targetJournalConference")) : "",
+    row.hasRelatedJournalConference ? evidenceBadge(row, "targetPublication", t("badge.relatedJournalConference")) : "",
     row.hasHonors ? evidenceBadge(row, "honors", t("badge.honors")) : "",
   ].join("");
   return `
@@ -411,7 +411,7 @@ function renderDossier() {
     <h2>${escapeHtml(row.name)}</h2>
     <div class="meta">${escapeHtml(row.role_title || t("entity.researcher"))} · ${escapeHtml(row.institution)} · ${escapeHtml(row.country)}</div>
     ${linkRow(row)}
-    <div class="tag-row">${row.tags.map(tagPill).join("")}${row.hasTargetVenue ? `<span class="badge">${escapeHtml(t("badge.targetVenue"))}</span>` : ""}${row.hasRelatedVenue ? `<span class="badge">${escapeHtml(t("badge.relatedVenue"))}</span>` : ""}</div>
+    <div class="tag-row">${row.tags.map(tagPill).join("")}${row.hasTargetJournalConference ? `<span class="badge">${escapeHtml(t("badge.targetJournalConference"))}</span>` : ""}${row.hasRelatedJournalConference ? `<span class="badge">${escapeHtml(t("badge.relatedJournalConference"))}</span>` : ""}</div>
 
     <section class="dossier-section">
       <div class="dossier-section__title">${escapeHtml(t("dossier.privateStatus"))}</div>
@@ -649,7 +649,7 @@ function dossierSectionId(sectionName) {
 function fitScore(row) {
   let score = 0;
   score += row.tags.length * 4;
-  score += venueScore(row) * 12;
+  score += journalConferenceScore(row) * 12;
   if (row.hasHonors) score += 8;
   if (row.status === "shortlist") score += 10;
   if (row.status === "rejected") score -= 30;
@@ -657,8 +657,8 @@ function fitScore(row) {
   return score;
 }
 
-function venueScore(row) {
-  return (row.hasTargetVenue ? 2 : 0) + (row.hasRelatedVenue ? 1 : 0);
+function journalConferenceScore(row) {
+  return (row.hasTargetJournalConference ? 2 : 0) + (row.hasRelatedJournalConference ? 1 : 0);
 }
 
 function tagCount(tag) {

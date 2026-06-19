@@ -13,7 +13,7 @@ python3 scripts/check_release.py
 ## Design Rules
 
 - Keep public schemas generic and explicit.
-- Put project-specific directions, venues, keywords, and evidence rules in `configs/domain.json`.
+- Put project-specific directions, journal/conference lists, keywords, and evidence rules in `configs/domain.json`.
 - Do not treat missing enrichment as negative evidence. Blank means unknown or not collected unless
   a source proves absence.
 - Keep private outreach state in `ui_state/outreach_status.csv`; never merge it into public fact

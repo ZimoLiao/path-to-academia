@@ -1,6 +1,6 @@
 {
   "name": "path-to-academia",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Guided agent workspace for building auditable academic opportunity databases.",
   "author": {
     "name": "path to academia contributors",
@@ -20,7 +20,7 @@
     "capabilities": ["Interactive", "Write"],
     "websiteURL": "https://github.com/ZimoLiao/path-to-academia",
     "defaultPrompt": [
-      "Run Guided Intake for a new academic opportunity workspace, asking separate questions for target venues, related venue families, honor sources, Google Scholar links, and other constraints.",
+      "Run Guided Intake for a new academic opportunity workspace, asking separate questions for target journals/conferences, related journal/conference families, honor sources, Google Scholar links, and other constraints.",
       "Initialize an ML and biology workspace after recording assumptions.",
       "Audit my path to academia workspace and export a wrapped XLSX."
     ],

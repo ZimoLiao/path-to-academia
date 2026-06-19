@@ -48,6 +48,15 @@ def project_version() -> str:
     return match.group(1)
 
 
+def text_version(path: Path, pattern: str, label: str) -> str:
+    text = path.read_text(encoding="utf-8")
+    match = re.search(pattern, text, flags=re.MULTILINE)
+    if not match:
+        rel = path.relative_to(ROOT)
+        raise SystemExit(f"{rel} does not declare {label}")
+    return match.group(1)
+
+
 def run(cmd: list[str], *, env: dict[str, str] | None = None, cwd: Path | None = None) -> None:
     printable = " ".join(cmd)
     print(f"==> {printable}")
@@ -98,6 +107,19 @@ def python_files() -> list[str]:
 
 def validate_versions() -> None:
     version = project_version()
+    version_sources = {
+        ROOT / "README.md": (r"Current release:\s*`([^`]+)`", "current release"),
+        ROOT / "src" / "path_to_academia" / "__init__.py": (r'__version__\s*=\s*"([^"]+)"', "__version__"),
+        PLUGIN_BUNDLE / "src" / "path_to_academia" / "__init__.py": (r'__version__\s*=\s*"([^"]+)"', "__version__"),
+        ROOT / "CITATION.cff": (r'^version:\s*"([^"]+)"', "citation version"),
+        PLUGIN_BUNDLE / "CITATION.cff": (r'^version:\s*"([^"]+)"', "citation version"),
+        PLUGIN_BUNDLE / "pyproject.toml": (r'^version\s*=\s*"([^"]+)"', "project version"),
+    }
+    for path, (pattern, label) in version_sources.items():
+        found = text_version(path, pattern, label)
+        if found != version:
+            rel = path.relative_to(ROOT)
+            raise SystemExit(f"{rel} {label} mismatch: {found!r}")
     manifest_paths = [
         ROOT / ".codex-plugin" / "plugin.json",
         ROOT / ".claude-plugin" / "plugin.json",

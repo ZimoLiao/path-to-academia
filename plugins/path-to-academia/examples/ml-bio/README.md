@@ -1,8 +1,8 @@
 # ML And Biology Example
 
 This example is a synthetic starter domain for testing the workflow without private data. It defines
-inclusion terms, review terms, evidence venues, and source-pass ideas for a mixed machine learning
-and biology workspace.
+inclusion terms, review terms, journal/conference evidence rules, and source-pass ideas for a
+mixed machine learning and biology workspace.
 
 Create the example workspace with:
 

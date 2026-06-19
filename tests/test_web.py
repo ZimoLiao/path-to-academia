@@ -192,8 +192,8 @@ def test_plugin_docs_start_with_guided_agent_intake() -> None:
         "research direction",
         "constraints",
         "geographic scope",
-        "target venues",
-        "related venue families",
+        "target journals/conferences",
+        "related journal/conference families",
         "honor sources",
         "Google Scholar",
         "output format",
@@ -201,3 +201,47 @@ def test_plugin_docs_start_with_guided_agent_intake() -> None:
     ]
     for phrase in required_guidance:
         assert phrase in surface
+
+
+def test_static_ui_uses_clear_journal_conference_labels() -> None:
+    root = Path(__file__).resolve().parents[1]
+    i18n = json.loads((root / "src" / "path_to_academia" / "webui" / "static" / "i18n.json").read_text(encoding="utf-8"))
+
+    assert i18n["en"]["filters.targetJournalConference"] == "Target journal/conference"
+    assert i18n["en"]["filters.relatedJournalConference"] == "Related journal/conference family"
+    assert i18n["en"]["sort.journalConference"] == "Journal/conference evidence"
+    assert i18n["en"]["badge.targetJournalConference"] == "Target journal/conference"
+    assert i18n["en"]["badge.relatedJournalConference"] == "Related journal/conference"
+    assert i18n["en"]["dossier.targetPublication"] == "Target journal/conference evidence"
+    assert i18n["zh-CN"]["filters.targetJournalConference"] == "重点期刊/会议"
+    assert i18n["zh-CN"]["filters.relatedJournalConference"] == "相关期刊/会议系列"
+    assert i18n["zh-CN"]["sort.journalConference"] == "期刊/会议证据"
+
+
+def test_static_ui_journal_conference_keys_are_wired_consistently() -> None:
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "src" / "path_to_academia" / "webui" / "static" / "index.html").read_text(encoding="utf-8")
+    js = (root / "src" / "path_to_academia" / "webui" / "static" / "app.js").read_text(encoding="utf-8")
+    i18n = json.loads((root / "src" / "path_to_academia" / "webui" / "static" / "i18n.json").read_text(encoding="utf-8"))
+
+    filter_contracts = {
+        "targetJournalConference": "hasTargetJournalConference",
+        "relatedJournalConference": "hasRelatedJournalConference",
+    }
+    for filter_key, row_flag in filter_contracts.items():
+        assert f'data-filter="{filter_key}"' in html
+        assert f'"filters.{filter_key}"' in json.dumps(i18n["en"])
+        assert f"{filter_key}: false" in js
+        assert f"state.filters.{filter_key}" in js
+        assert f"!row.{row_flag}" in js
+        assert f"row.{row_flag}" in js
+
+    assert 'value="journalConference"' in html
+    assert "sort === \"journalConference\"" in js
+    assert "function journalConferenceScore(row)" in js
+    assert "sort.journalConference" in i18n["en"]
+
+    stale_fragments = ["targetVenue", "relatedVenue", "sort.venue", "venueScore"]
+    surface = html + "\n" + js + "\n" + json.dumps(i18n)
+    for fragment in stale_fragments:
+        assert fragment not in surface

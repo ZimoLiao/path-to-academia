@@ -15,8 +15,8 @@ Start from `configs/domain.json` and define:
 - inclusion terms that make a person, group, or role relevant
 - review terms that require manual inspection
 - exclusion terms that indicate expired, off-topic, duplicate, or unverified records
-- target or impact venues that matter for prioritization
-- related venue families that should count as adjacent evidence
+- target journals/conferences that matter for prioritization
+- related journal/conference families that should count as adjacent evidence
 - honor sources such as awards, medals, fellowships, academies, invited/keynote lists, editorial
   boards, and committee lists
 - identity-link sources accepted for verification, including official profiles, Google Scholar
@@ -25,17 +25,18 @@ Start from `configs/domain.json` and define:
 - source passes to run
 
 These terms are project data. Do not bake them into code or schema names. Ask the user for target
-venues, related venue families, honor sources, and other constraints as separate questions. Target
-venues are usually a short high-signal prioritization list, not a full field bibliography; if the
-agent proposes defaults, record them as provisional until the user confirms them.
+journals/conferences, related journal/conference families, honor sources, and other constraints as
+separate questions. Target journals/conferences are usually a short high-signal prioritization
+list, not a full field bibliography; if the agent proposes defaults, record them as provisional
+until the user confirms them.
 
 ## 2. Plan Constraint-Driven Source Passes
 
 Convert constraints into source paths before collecting names. This prevents a workspace from
 collapsing into a small keyword-search shortlist.
 
-- Publication constraints: search target journals, venue families, proceedings, special issues,
-  editorial boards, and recurring authors.
+- Publication constraints: search target journals, target conferences, related journal families,
+  proceedings, special issues, editorial boards, and recurring authors.
 - Conference or prestige constraints: reverse-scan societies, awards, medals, invited talks,
   keynote lists, program committees, and academy or fellowship rosters.
 - Geography or institution constraints: use official department, institute, center, lab, and
@@ -60,8 +61,9 @@ Write source-level rows into `raw/source_records.csv`. A source row should prese
 - extracted name, institution, role, location, and links when available
 - extraction method and notes
 
-Good source passes include official group pages, award lists, conference programs, publication
-venue sweeps, job boards, funder project databases, institute rosters, and curated directories.
+Good source passes include official group pages, award lists, conference programs,
+journal/conference author sweeps, job boards, funder project databases, institute rosters, and
+curated directories.
 
 Persist incrementally. Do not open or read a large collection of pages and wait until the end to
 write data. After each source or small batch, write raw rows, candidate/review rows, and an audit
@@ -95,9 +97,9 @@ Every included row in `tables/entities_final.csv` needs:
 Rows that are weak, adjacent, ambiguous, duplicated, stale, or off-topic belong in
 `tables/entities_review_or_excluded.csv`, not in an untracked scratch file.
 
-Missing enrichment is not evidence of absence. A blank publication signal, metric, representative
-work, or current-opening field means unknown or not collected unless a source explicitly proves the
-negative.
+Missing enrichment is not evidence of absence. A blank journal/conference evidence, metric,
+representative work, or current-opening field means unknown or not collected unless a source
+explicitly proves the negative.
 
 ## 6. Merge Conservatively
 

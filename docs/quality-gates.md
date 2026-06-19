@@ -16,17 +16,18 @@ is complete.
 - Private outreach state is only in `ui_state/outreach_status.csv`.
 - Current facts have current retrieval dates and sources.
 - `configs/domain.json` sentinel checks either appear in the outputs or have explicit audit notes.
-- `configs/domain.json` records target venues, related venue families, honor sources, and open-ended
-  additional constraints as separate user-owned lists. A target venue list should not be auto-filled
-  into a broad field bibliography without user confirmation.
+- `configs/domain.json` records target journals/conferences, related journal/conference families,
+  honor sources, and open-ended additional constraints as separate user-owned lists. A target
+  journal/conference list should not be auto-filled into a broad field bibliography without user
+  confirmation.
 - Wrapped XLSX output opens with a frozen header, filters, and wrapped text.
 - Blank enrichment fields are treated as unknown or not collected, not as evidence that a person,
   group, or role lacks that attribute.
 - QA reports enrichment coverage for important optional fields such as `homepage_url`, `scholar_url`,
   `orcid_url`, `openalex_url`, `semantic_scholar_url`, `honors`, and
   `target_publication_evidence`.
-- Source passes cover constraint-derived paths such as publication venues, conferences, awards,
-  institutions, funders, job boards, and bridge sources when those constraints are in scope.
+- Source passes cover constraint-derived paths such as journals, conferences, awards, institutions,
+  funders, job boards, and bridge sources when those constraints are in scope.
 - Substantial passes leave reusable operational memory in `audit/`, including false positives,
   source limits, failed queries, manual decisions, and next source passes.
 - Collection writes raw, candidate, review, position, or shard rows incrementally instead of keeping
@@ -63,7 +64,7 @@ Stop and repair the workflow when:
 - a source pass silently drops weak or adjacent records without review output
 - a source pass has no source-batch accounting or hides that most rows came from a seed roster
 - a sentinel check is absent or downgraded without an audit explanation
-- the agent chooses target venues, related venue families, honor sources, or other constraints
+- the agent chooses target journals/conferences, related journal/conference families, honor sources, or other constraints
   without asking the user or clearly marking the list as provisional
 - `scholar_url` or other requested identity-link fields are blank across the final table without an
   audit note explaining that they were not collected

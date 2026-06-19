@@ -16,15 +16,16 @@ Important keys:
 
 - `domain`: inclusion, review, and exclusion terms.
 - `constraints`: opportunity types, geography, and open-ended additional constraints.
-- `evidence`: target venues, related venue families, honor sources, and accepted identity sources.
+- `evidence`: target journals/conferences, related journal/conference families, honor sources, and accepted identity sources.
 - `source_passes`: planned source-family passes with stable batch names.
 - `sentinel_checks`: user-provided coverage probes such as must-include people, groups, roles,
-  venues, institutions, or source families. Each sentinel must appear in outputs or receive an
-  explicit audit explanation.
+  journals, conferences, institutions, or source families. Each sentinel must appear in outputs or
+  receive an explicit audit explanation.
 
-Keep `target_venues` user-owned and usually short. They are high-signal prioritization anchors, not
-a full bibliography for the field. Put adjacent or broader lists in `related_venue_families`, and
-put award, medal, fellowship, academy, invited/keynote, editorial-board, and committee sources in
+Keep the `target_venues` config key user-owned and usually short. It means target
+journals/conferences used as high-signal prioritization anchors, not a full bibliography for the
+field. Put adjacent or broader journal/conference families in `related_venue_families`, and put
+award, medal, fellowship, academy, invited/keynote, editorial-board, and committee sources in
 `honor_sources`.
 
 ## Raw Source Records
@@ -67,9 +68,9 @@ Required fields:
 Evidence fields:
 
 - `domain_tags`: semicolon-separated project tags used by the UI tag tree.
-- `target_venue_exact`: `yes` when there is verified evidence in a configured target venue.
-- `target_venue_family`: `yes` when there is verified evidence in a related configured venue family.
-- `target_publication_evidence`: concise text naming or summarizing the verified target evidence.
+- `target_venue_exact`: `yes` when there is verified evidence in the configured target journal/conference list.
+- `target_venue_family`: `yes` when there is verified evidence in the configured related journal/conference family list.
+- `target_publication_evidence`: concise text naming or summarizing the verified journal/conference evidence.
 - `honors`: awards or recognition relevant to prioritization.
 - `metric_source`: source and retrieval context for metrics.
 

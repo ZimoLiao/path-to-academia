@@ -26,6 +26,9 @@ def test_cli_initializes_checks_and_exports_workspace(tmp_path: Path, capsys) ->
     assert context_output["evidence"]["related_venue_families"]
     assert context_output["evidence"]["honor_sources"]
     assert "Google Scholar author page" in context_output["evidence"]["identity_sources"]
+    assert context_output["terminology"]["target_venues"] == "target journals/conferences"
+    assert context_output["terminology"]["related_venue_families"] == "related journal/conference families"
+    assert context_output["terminology"]["target_venue_exact"] == "target journal/conference evidence flag"
     assert "additional_constraints" in context_output["constraints"]
     assert context_output["privacy_boundary"]["private_state"] == "ui_state/outreach_status.csv"
 
