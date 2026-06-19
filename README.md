@@ -3,10 +3,8 @@
 path to academia is a plugin for Claude Code, Codex, and compatible coding agents that helps you
 find potential PhD or postdoc supervisors, labs, and open academic positions.
 
-Tell the agent your research direction and constraints; the plugin guides it to ask the right
-intake questions, search current sources, verify identities, save auditable evidence, export
-CSV/XLSX files, and browse candidates in a local UI without mixing private outreach notes into
-public facts.
+Tell the agent your research direction and constraints; it asks the right questions, searches
+current sources, saves a traceable candidate table, and opens a Web UI for review.
 
 The default example is intentionally generic: machine learning and biology. The workflow is
 configured through `configs/domain.json`, so a new project can define its own inclusion terms,
